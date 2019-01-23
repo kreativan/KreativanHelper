@@ -2,8 +2,8 @@ $(document).ready(function () {
 
     /**
      *  Display modal confirm
-     *  It's jsut gonna prompt you "are you sure" and redirect to the same url
-     *  Usign this on URLs with $_GET variables. Eg: for deleteing a page, ./?action=delete&id=123
+     *  It's just gonna prompt you "are you sure" and redirect to the same url
+     *  Using this on URLs with $_GET variables. Eg: for deleteing a page, ./?action=delete&id=123
      * 
      */
     function modalConfirm() {
@@ -115,49 +115,13 @@ $(document).ready(function () {
                  * 
                  */
 
-
-                /**
-                 *  Publish
-                 * 
-                 */
                 if (thisAction == "publish") {
 
                     thisElement.closest("tr").toggleClass("ivm-is-hidden"); 
 
-                /**
-                 *  Trash
-                 * 
-                 */   
                 } else if (thisAction == "trash") {
 
                     thisElement.closest("tr").remove();
-
-                    let trashCount = $(".ivm-trash-link").attr("data-count");
-                    trashCount = parseInt(trashCount);
-                    trashCount = (trashCount == 0) ? 1 : trashCount + 1;
-
-                    $(".ivm-trash-link").removeClass("uk-hidden");
-                    $(".ivm-trash-link span").text("(" + trashCount + ")");
-                    $(".ivm-trash-link").attr("data-count", trashCount);
-
-                /**
-                 *  Restore & Delete
-                 * 
-                 */
-                } else if (thisAction == "restore" || thisAction == "delete") {
-
-                    thisElement.closest("tr").remove();
-
-                    let trashCount = $(".ivm-trash-link").attr("data-count");
-                    trashCount = parseInt(trashCount);
-                    trashCount = trashCount - 1;
-
-                    $(".ivm-trash-link span").text("(" + trashCount+")");
-                    $(".ivm-trash-link").attr("data-count", trashCount);
-
-                    if(trashCount < 1) {
-                        window.location.replace("./../");
-                    }      
 
                 }
 
