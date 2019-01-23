@@ -211,8 +211,8 @@ class KreativanHelper extends WireData implements Module {
     ===================================================================================== */
 
     /**
-     *  Change Field Options 
-     *  
+     *  Change Field Options for specific template 
+     * 
      *  @param template     string -- Template name
      *  @param field        string -- Field Name
      *  @param options      array -- array of options eg: ["option" => value]
