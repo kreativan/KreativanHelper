@@ -18,6 +18,7 @@
  *  @method     createRepeater() -- create Repeater field
  *  @method     repeaterFieldOptions() -- set field options inside a Repeater or FieldsetPage
  *  @method     createFieldsetPage() -- craete FieldsetPage field
+ *  @method     createOptionsField() -- create Options field
  *
 */
 
