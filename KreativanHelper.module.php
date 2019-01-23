@@ -244,7 +244,7 @@ class KreativanHelper extends WireData implements Module {
      *  @example    $this->createRepeater("dropdown", "Dropdown", $fields_array, "{title}", "Repeaters");
      * 
      */     
-    public function createRepeater($name, $label, $fields, $items_label, $tags) {
+    public function createRepeater($name, $label, $fields, $items_label, $tags = "") {
 
         // Create field
         $f = new Field();
@@ -309,7 +309,7 @@ class KreativanHelper extends WireData implements Module {
      *  @example    $this->createFieldsetPage("my_block", "My Block", $fields_array, "Blocks");
      * 
      */     
-    public function createFieldsetPage($name, $label, $fields, $tags) {
+    public function createFieldsetPage($name, $label, $fields, $tags = "") {
 
         // Create field
         $f = new Field();
@@ -372,15 +372,17 @@ class KreativanHelper extends WireData implements Module {
         $this->fieldOptions("repeater_$repeater_name", $field_name, $options);
     }
 
+
     /**
      *  Create Options Field
      *  @param inputfield   string -- InputfieldRadios / InputfieldAsmSelect / InputfieldCheckboxes / InputfieldSelect / InputfieldSelectMultiple
      *  @param name         string -- Field name
      *  @param label        string -- field label
      *  @param options_arr  array -- eg: ["one", "two", "three"]
+     *  @param tags         string -- Field tag
      * 
      */
-    public function createOptionsField($inputfield, $name, $label, $options_arr) {
+    public function createOptionsField($inputfield, $name, $label, $options_arr, $tags = "") {
 
         $i = 1;
         $options = "";
@@ -393,6 +395,7 @@ class KreativanHelper extends WireData implements Module {
         $f->inputfieldClass = $inputfield; // input type: radio, select etc...
         $f->name = $name;
         $f->label = $label;
+        $f->tags = $tags;
         $f->save(); 
         // save before adding options
         // $options = "1=Blue\n2=Green\n3=Brown\n";
