@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css?family=Barlow:400,500;600');
+
+:root {
+    --font: 'Barlow', sans-serif;
+    --box-shadow: 0 2px 5px -1px rgba(0,0,0,.08);
+    --border-color: #eaeaea;
+    --padding: 20px;
+    --dark-color: #354B60;
+}
+
+/* =========================================================== 
+    Style
+=========================================================== */
+
+html, body {
+    background: #f5f5f5;
+}
+
+#PageListContainer {
+    padding:var(--padding);
+    background: #fff;
+    border:1px solid var(--border-color);
+    box-shadow:var(--box-shadow);
+}
+
+#ProcessPageEditContent.Inputfield {
+    background: none;
+}
+
+#pw-content-body > .uk-description-list,
+.pw-table-responsive:not(.pw-table-resizable),
+#ProcessListerResults {
+    background: #fff;
+    margin-bottom:20px;
+    padding:var(--padding);
+    border:1px solid var(--border-color);
+    box-shadow:var(--box-shadow);
+}
+
+.Inputfields .pw-table-responsive,
+[id^=wrap_Inputfield_profile] .pw-table-responsive,
+#ProcessTemplateList .pw-table-responsive,
+#ProcessFieldList .pw-table-responsive {
+    padding:0;
+    border: none;
+    box-shadow:none;
+}
+
+
+.PageList .PageListItem > a, 
+.uk-tab > li > a, 
+#pw-masthead .uk-navbar-nav > li > a, 
+button, .uk-button, .ui-button, 
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font);
+}
+
+.PageList .PageListItem > a, 
+.uk-tab > li > a, 
+#pw-masthead .uk-navbar-nav > li > a, 
+button, .uk-button, .ui-button {
+    font-size: 17px;
+}
+
+.uk-button-default {
+    background: #fff;
+}
+
+/* =========================================================== 
+    Login
+=========================================================== */
+.ProcessLogin #ProcessLoginForm {
+    width:350px;
+    background: #fff;
+    padding:25px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+.ProcessLogin #ProcessLoginForm #wrap_Inputfield_login_submit,
+.ProcessLogin #ProcessLoginForm #wrap_login_name,
+.ProcessLogin #ProcessLoginForm #wrap_login_pass {
+    width:100%;
+}
+
+.ProcessLogin #pw-mastheads .pw-container {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ProcessLogin #pw-mastheads .pw-logo-link {
+    display:inline-block;
+    width:350px;
+    text-align:center;
+}
+
+/* =========================================================== 
+    Custom Style
+=========================================================== */
+
+.ivm-white {
+    background: #fff;
+}
+
+.ivm-border {
+    border: 1px solid var(--border-color);
+}
+
+.ivm-box-shadow:not(.uk-card-hover),
+.uk-box-shadow-small:not(.uk-card-hover) {
+    box-shadow: 0 2px 5px -1px rgba(0,0,0,.08) !important;
+}
+
+.ivm-muted,
+.uk-background-muted {
+    background: #F0F3F7;
+}
+
+/*  Basics
+=========================================================== */
+
+.tm-font {
+    font-family: var(--font);
+}
+
+.uk-button {
+    text-transform: uppercase;
+    font-size: 15px;
+    font-weight: 500;
+}
+.uk-button-link {
+    color: var(--dark-color);
+}
+.uk-button-link:focus,
+.uk-button-link:hover {
+    text-decoration: none;
+}
+
+
+/* Sortable Table
+======================================================================== */
+
+.handle {
+    padding:0 10px;
+    cursor: grab;
+    cursor: -webkit-grab;
+}
+
+.ui-sortable-helper .handle {
+    cursor: move;
+}
+
+.ui-sortable-helper {
+    background: #fff;
+    border:1px solid #ddd;
+    box-shadow: 0px 5px 25px rgba(0, 0, 0, 0.1);
+    width:100%;
+}
+
+#sortable a > .fa {
+    font-size:20px;
+}
+
+#sortable a:hover {
+    text-decoration: none;
+}
+
+.ui-sortable-helper > td:not(:first-child):not(:nth-child(2)) {
+    display:none;
+}
+
+/*  Table
+=========================================================== */
+.uk-table-striped tbody tr:nth-of-type(2n+1), .uk-table-striped > tr:nth-of-type(2n+1) {
+    background: #f9f9f9;
+}
+
+.ivm-table i {
+    font-size:18px;
+}
+
+a.ivm-is-unpublished,
+tr.ivm-is-unpublished a {
+    text-decoration: line-through;
+    color:#888;
+}
+
+a.ivm-is-hidden,
+tr.ivm-is-hidden *:not(option):not(select) {
+    color:#888;
+}
+
+
+tr.ivm-is-hidden .fa-toggle-on:before {
+    content: "\f204";
+}
+
+td a:hover {
+    text-decoration:none;
+}
+
+td .ivm-ajax-button {
+    display:inline-block;
+    width: 35px;
+    text-align:center;
+}
+
+/* =========================================================== 
+    Tabs
+=========================================================== */
+.ivm-tabs {
+    margin-bottom: -1px;
+    margin-left:1px;
+}
+
+.ivm-tabs.uk-tab a {
+    text-transform: uppercase;
+    font-size: 15px !important;
+    font-weight: 500;
+}

@@ -1,0 +1,136 @@
+:root {
+    --muted-bg: #F8F8F9;
+}
+
+/* =========================================================== 
+    Hide
+=========================================================== */
+.ProcessPageEdit-template-footer #PageEditTabs,
+.ProcessPageEdit-template-site_settings #_ProcessPageEditChildren,
+.ProcessPageEdit-template-site_settings #_ProcessPageEditDelete,
+.ProcessPageEdit-template-site_settings #_ProcessPageEditSettings {
+    display: none;
+}
+
+
+/* =========================================================== 
+    Fields
+=========================================================== */
+
+.InputfieldHeader {
+    font-weight: 600;
+}
+
+/*  Fieldset
+=========================================================== */
+
+.InputfieldFieldsetOpen > .InputfieldContent,
+.InputfieldFieldsetOpen > .InputfieldHeader {
+    background: var(--muted-bg) !important;
+    margin:0;
+}
+
+[id^=wrap_Inputfield_matrix_settings].InputfieldStateCollapsed > .InputfieldHeader,
+[id^=Inputfield_SET_options].InputfieldStateCollapsed > .InputfieldHeader {
+    padding-top:13px;
+    padding-bottom:13px;
+}
+
+
+/*  Link Block
+=========================================================== */
+
+[id^=wrap_Inputfield_link_block] > .InputfieldHeader {
+    display:none;
+}
+[id^=wrap_Inputfield_link_block] > .InputfieldContent {
+    padding:0px;
+    margin:0;
+}
+[id^=wrap_Inputfield_link_block] .Inputfield {
+    margin-top:0 !important;
+}
+
+/*  SVG Icons Field
+=========================================================== */
+
+#wrap_Inputfield_svg_icons .gridImage__overflow {
+    background: #f8f8f8;
+    padding:5px;
+    width:100px !important;
+    height:100px !important;
+}
+#wrap_Inputfield_svg_icons .gridImage__overflow > img {
+    height:42px;
+    width:auto;
+}
+#wrap_Inputfield_svg_icons .gridImage__edit > span {
+    display: none !important;
+}
+
+/* Body -- editor in repeater
+=========================================================== */
+
+[id^='Inputfield_repeater_item_'] .InputfieldCKEditor {
+    margin-top:0 !important;
+    border-top:1px solid #ddd;
+}
+[id^='Inputfield_repeater_item_'] .InputfieldCKEditor:not(.InputfieldStateCollapsed) > label {
+    display:none;
+}
+[id^='Inputfield_repeater_item_'] .InputfieldCKEditor > .InputfieldContent {
+    padding: 0px !important;
+}
+[id^='Inputfield_repeater_item_'] .cke_chrome {
+    border:none;
+    border-bottom: 1px solid #ddd;
+}
+
+/*  Matrix
+=========================================================== */
+
+.InputfieldRepeaterMatrix > .InputfieldContent > .Inputfields > .Inputfield > .InputfieldHeader {
+    padding: 15px !important;
+}
+.InputfieldRepeaterMatrix > .InputfieldContent > .Inputfields > .InputfieldRepeaterItem > .InputfieldHeader > .InputfieldRepeaterItemControls {
+    top:7px !important;
+}
+
+
+a.InputfieldRepeaterMatrixAddLink {
+    background: #fff;
+    color:#354b60;
+    padding:3px 7px;
+    border-radius:2px;
+    font-size:14px;
+    transition:box-shadow 0.2s ease;
+    border:1px solid #ddd;
+}
+
+a.InputfieldRepeaterMatrixAddLink:hover {
+    text-decoration: none;
+    box-shadow:0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.InputfieldRepeaterMatrixAddItem > a {
+    display:inline-block;
+    margin-bottom:5px;
+}
+
+a.InputfieldRepeaterMatrixAddLink[data-label="Editor"] > i:before {content:"\f040";}
+a.InputfieldRepeaterMatrixAddLink[data-label="Headline"] > i:before {content:"\f1dc";}
+a.InputfieldRepeaterMatrixAddLink[data-label="Buttons"] > i:before {content:"\f245"}
+a.InputfieldRepeaterMatrixAddLink[data-label="Grid"] > i:before {content:"\f009";}
+a.InputfieldRepeaterMatrixAddLink[data-label="Grid Stack"] > i:before {content:"\f022";}
+a.InputfieldRepeaterMatrixAddLink[data-label="Image"] > i:before {content:"\f03e";}
+a.InputfieldRepeaterMatrixAddLink[data-label="Gallery"] > i:before {content:"\f030";}
+a.InputfieldRepeaterMatrixAddLink[data-label="Code"] > i:before {content:"\f121";}
+a.InputfieldRepeaterMatrixAddLink[data-label="Divider"] > i:before {content:"\f141";}
+a.InputfieldRepeaterMatrixAddLink[data-label="Spacer"] > i:before {content:"\f07d";}
+a.InputfieldRepeaterMatrixAddLink[data-label="Widget"] > i:before {content:"\f135";}
+a.InputfieldRepeaterMatrixAddLink[data-label="Menu"] > i:before {content:"\f0c9"}
+a.InputfieldRepeaterMatrixAddLink[data-label="Subnav"] > i:before {content:"\f0c9"}
+a.InputfieldRepeaterMatrixAddLink[data-label="Accordion"] > i:before {content:"\f0ae"}
+a.InputfieldRepeaterMatrixAddLink[data-label="Twitter"] > i:before {content:"\f099"}
+a.InputfieldRepeaterMatrixAddLink[data-label="News"] > i:before {content:"\f1ea"}
+a.InputfieldRepeaterMatrixAddLink[data-label="Tabs"] > i:before {content:"\f114"}
