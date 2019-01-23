@@ -90,7 +90,7 @@ class KreativanHelper extends WireData implements Module {
      *  @var ajax_action    publish, unpublish, trash...
      *  @var id             integer, page id / selector id
      * 
-     *  @example    use it in a table...
+     *  @example use it in a table...
      * 
      *  <td>
      *      <a href="#" class="ivm-ajax-button" data-id="<?=$item->id?>" data-action="publish">
@@ -369,6 +369,36 @@ class KreativanHelper extends WireData implements Module {
      */
     public function repeaterFieldOptions($repeater_name, $field_name, $options) {
         $this->fieldOptions("repeater_$repeater_name", $field_name, $options);
+    }
+
+    /**
+     *  Create Options Field
+     *  @param inputfield   string -- InputfieldRadios / InputfieldAsmSelect / InputfieldCheckboxes / InputfieldSelect / InputfieldSelectMultiple
+     *  @param name         string -- Field name
+     *  @param label        string -- field label
+     *  @param options_arr  array -- eg: ["one", "two", "three"]
+     * 
+     */
+    public function createOptionsField($inputfield, $name, $label, $options_arr) {
+
+        $i = 1;
+        $options = "";
+        foreach($options_arr as $opt) {
+            $options .= $i++ . "={$opt}\n";
+        }
+
+        $f = new Field();
+        $f->type = $this->modules->get("FieldtypeOptions");
+        $f->inputfieldClass = $inputfield; // input type: radio, select etc...
+        $f->name = $name;
+        $f->label = $label;
+        $f->save(); 
+        // save before adding options
+        // $options = "1=Blue\n2=Green\n3=Brown\n";
+        $set_options = new \ProcessWire\SelectableOptionManager();
+        $set_options->setOptionsString($f, $options, false);
+        $f->save();
+
     }
     
 
