@@ -14,11 +14,15 @@
  *  @method     clearCache() -- clear AIOM cache and refresh modules
  *  
  *  API:
- *  @method     fieldOptions() -- use this method to change field option based on template
+ *  @method     setFieldOptions() -- use this method to change field option based on template
  *  @method     createRepeater() -- create Repeater field
- *  @method     repeaterFieldOptions() -- set field options inside a Repeater or FieldsetPage
+ *  @method     setRepeaterFieldOptions() -- set field options inside a Repeater or FieldsetPage
  *  @method     createFieldsetPage() -- craete FieldsetPage field
  *  @method     createOptionsField() -- create Options field
+ *  
+ *  Custom:
+ *  @method     createTemplateStructure() -- create Main Page -> Subpages
+ *  @method     deleteTemplateStructure() -- delete pages, templates, fields
  *
 */
 
@@ -218,11 +222,11 @@ class KreativanHelper extends WireData implements Module {
      *  @param field        string -- Field Name
      *  @param options      array -- array of options eg: ["option" => value]
      * 
-     *  @example $this->fieldOptions("home", "text", ["label" => "My Text"]);
+     *  @example $this->setFieldOptions("home", "text", ["label" => "My Text"]);
      *  
      */
 
-    public function fieldOptions($template, $field, $options) {
+    public function setFieldOptions($template, $field, $options) {
         // change field settings for this template
         $t = wire('templates')->get($template);
         $f = $t->fieldgroup->getField($field, true);
@@ -360,16 +364,16 @@ class KreativanHelper extends WireData implements Module {
     /**
      *  Repeater & FieldsetPage Field Options
      * 
-     *  @method fieldOptions()  Using this same method with custom params. Just because repeater template name has "repaeter_" prefix
+     *  @method setFieldOptions()  Using this same method with custom params. Just because repeater template name has "repaeter_" prefix
      *  @param  repeater_name   string -- name of the repeater field
      *  @param  field_name      string -- name of the field
      *  @param  options         array -- field options ["option" => "value"]
      *  
-     *  @example $this->fieldOptions("my_repeater_name", "text", ["label" => "My Text"]);
+     *  @example $this->setRepeaterFieldOptions("my_repeater_name", "text", ["label" => "My Text"]);
      * 
      */
-    public function repeaterFieldOptions($repeater_name, $field_name, $options) {
-        $this->fieldOptions("repeater_$repeater_name", $field_name, $options);
+    public function setRepeaterFieldOptions($repeater_name, $field_name, $options) {
+        $this->setFieldOptions("repeater_$repeater_name", $field_name, $options);
     }
 
 
@@ -383,6 +387,7 @@ class KreativanHelper extends WireData implements Module {
      * 
      */
     public function createOptionsField($inputfield, $name, $label, $options_arr, $tags = "") {
+
 
         $i = 1;
         $options = "";
@@ -403,7 +408,163 @@ class KreativanHelper extends WireData implements Module {
         $set_options->setOptionsString($f, $options, false);
         $f->save();
 
+        // Radio options 1 column
+        if($inputfield == "InputfieldRadios") {
+            $f->required = "1";
+            $f->defaultValue = "1";
+            $f->optionColumns = "1";
+            $f->save();
+        }
+
     }
-    
+
+    /**
+     *  Create Template Structure
+     *  @example Page -> Subpage
+     * 
+     *  @param main array -- eg: ["name" => "my_template_name", "fields" => ["One", "Two", "Three"]];
+     *  @var name string -- template name
+     *  @var fields array --  template fields
+     *  @var icon string (fa-icon) -- template icon
+     *  @var parent page id
+     *  @var page_title string
+     * 
+     *  @param item array -- eg: ["name" => "my_template_name", "fields" => ["One", "Two", "Three"]];
+     *  @var name string -- template name
+     *  @var fields array --  template fields
+     *  @var icon string (fa-icon) -- template icon
+     *  @var page_title string
+     * 
+     *  @param tag string
+     * 
+     * 
+     */
+    public function createTemplateStructure($main, $item, $tag = "") {
+
+        $main_name          = $main["name"] ? $main["name"] : "";
+        $main_fields        = $main["fields"] ? $main["fields"] : "";
+        $main_icon          = $main["icon"] ? $main["icon"] : "";
+        $main_parent        = $main["parent"] ? $main["parent"] : "";
+        $main_page_title    = $main["page_title"] ? $main["page_title"] : "";
+
+        $item_name          = $item["name"] ? $item["name"] : "";
+        $item_fields        = $item["fields"] ? $item["fields"] : "";
+        $item_icon          = $item["icon"] ? $item["icon"] : "";
+        $item_page_title    = $item["page_title"] ? $item["page_title"] : "";
+
+        // Main Fieldgroup
+        $main_fg = new Fieldgroup();
+        $main_fg->name = $main_name;
+        foreach($main_fields as $field) {
+            $main_fg->add($this->fields->get($field)); 
+        }
+        $main_fg->save();
+
+        // Main Template 
+        $main_t = new Template();
+        $main_t->name = $main_name;
+        $main_t->fieldgroup = $main_fg;
+        if(!empty($main_icon)) {
+            $main_t->pageLabelField = "$main_icon";
+        }
+        $main_t->save();
+        
+
+        // Item Fieldgroup
+        $item_fg = new Fieldgroup();
+        $item_fg->name = $item_name;
+        foreach($item_fields as $field) {
+            $item_fg->add($this->fields->get($field)); 
+        }
+        $item_fg->save();
+
+        // Item Template 
+        $item_t = new Template();
+        $item_t->name = $item_name;
+        $item_t->fieldgroup = $item_fg; // add the field group
+        $item_t->save();
+
+        // Item Template options
+        $item_t = wire('templates')->get($item_name);
+        $item_t->noChildren = "1";
+        $item_t->tags = $tag;
+        $item_t->pageLabelField = $item_icon;
+        $item_t->parentTemplates = array(wire('templates')->get($main_name)); // allowedForParents
+        $item_t->save();
+
+
+        // Main Template Options
+        $main_t = wire('templates')->get("main-menu");
+        $main_t->noParents = '-1';
+        $main_t->tags = $tag;
+        $main_t->pageLabelIcon = $main_icon;
+        $main_t->childTemplates = array(wire('templates')->get($item_name)); // allowedForChildren
+        $main_t->save();
+
+        // Create Example Pages
+        if(!empty($main_parent)) {
+
+            $main_p = new Page();
+            $main_p->template = $main_name;
+            $main_p->parent = $main_parent;
+            $main_p->title = $main_page_title;
+            $main_p->status('hidden');
+            $main_p->save();
+
+            $item_p = new Page();
+            $item_p->template = $item_name;
+            $item_p->parent = $main_p;
+            $item_p->title = $item_page_title;
+            $item_p->save();
+
+        }
+
+    }
+
+    /**
+     *  Delete Template Structure
+     *  @param temp_array array -- template names
+     *  @param fields_arr array -- field names
+     * 
+     */
+    public function deleteTemplateStructure($temp_array, $fields_arr) {
+
+        // 1. Delete Pages
+        foreach($temp_array as $tmp) {
+            $p_arr = $this->pages->find("template=$tmp, include=all");
+            if($p_arr->count) {
+                foreach($p_arr as $p) {
+                    $p->delete(true);
+                }
+            }
+        }
+
+        // 2. Delete Templates
+        foreach($temp_array as $tmp) {
+            $t = $this->templates->get($tmp);
+            if($t && !empty($t)) {
+                $this->templates->delete($t);
+            }
+        }
+
+        // 3. Delete Fieldgroup
+        foreach($temp_array as $tmp) {
+            $fg = $this->fieldgroups->get($tmp);
+            if($fg && !empty($fg)) {
+                $this->fieldgroups->delete($fg);
+            }
+        }
+
+        // 4. Delete Fields
+        foreach($fields_arr as $field) {
+            $f = $this->fields->get($field);
+            if($f && !empty($f)) {
+                $this->fields->delete($f);
+            }
+        }
+
+
+
+    }
 
 }
