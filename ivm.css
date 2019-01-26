@@ -21,7 +21,11 @@
 
 .ivm-tabs + .ivm-border {
     border-top:0;
-    border-bottom:0;
+}
+
+.ivm-table tr:last-child,
+.ivm-table tr:last-child td {
+    border-bottom: 0 !important;
 }
 
 .ivm-table th {
