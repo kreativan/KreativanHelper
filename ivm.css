@@ -1,18 +1,21 @@
 :root {
     --border: #ddd;
+    --border-light: #f0f0f0;
 }
 
 /* =========================================================== 
     Utility
 =========================================================== */
 
-/**
- *  Border
- * 
- */
-
 .ivm-border {
     border: 1px solid var(--border);
+}
+.ivm-border-light {
+    border: 1px solid var(--border-light);
+}
+
+.ivm-white {
+    background: #fff;
 }
 
 /* =========================================================== 
@@ -111,9 +114,57 @@ td .ivm-ajax-button {
 }
 
 /* =========================================================== 
+    Actions
+=========================================================== */
+.ivm-actions {
+    position:relative;
+    z-index:99;
+}
+
+.ivm-actions--circle a {
+    display:inline-block;
+    width:30px;
+    height:30px;
+    line-height:28px;
+    border:1px solid #ddd;
+    border-radius: 50%;
+    text-align: center;
+    font-size:15px;
+    background: #3EB998;
+    color: #fff;
+    border-color: transparent;
+}
+
+.ivm-actions--circle a[data-action="trash"],
+.ivm-is-hidden .ivm-actions--circle a {
+    color: #888;
+    background: white;
+    border:1px solid #ddd;
+}
+
+.ivm-actions--circle a[data-action="trash"]:hover {
+    color: #BC283D;
+}
+
+/* =========================================================== 
     Style
 =========================================================== */
 
 .ivm-tabs + div.ivm-border {
     margin-left: -1px;
+}
+
+.ivm-is-hidden .uk-card-default {
+    box-shadow:none !important;
+    border: 1px solid var(--border-light);
+}
+
+.ivm-is-hidden .uk-card  *:not(i) {
+    color: #888;
+}
+
+.ivm-is-hidden .uk-card img,
+.ivm-is-hidden .uk-card svg {
+    filter: grayscale(100%);
+    opacity: 0.7;
 }
