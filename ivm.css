@@ -35,17 +35,10 @@
     font-size:13px;
 }
 
-.ivm-table td > a {
-    margin-left:10px;
-}
-
 .ivm-table td:last-child > a:hover {
     text-decoration: none;
 }
 
-.uk-table-striped tbody tr:nth-of-type(2n+1), .uk-table-striped > tr:nth-of-type(2n+1) {
-    background: #f9f9f9;
-}
 
 .ivm-table i {
     font-size:18px;
@@ -121,18 +114,30 @@ td .ivm-ajax-button {
     z-index:99;
 }
 
+.ivm-actions a {
+    margin-left:5px;
+}
+
+.uk-card .ivm-actions a {
+    margin-left: 0;
+}
+
+.ivm-actions--circle a i {
+     font-size:14px !important;
+}
+
 .ivm-actions--circle a {
     display:inline-block;
-    width:30px;
-    height:30px;
-    line-height:28px;
-    border:1px solid #ddd;
+    box-sizing:border-box;
+    width:28px;
+    height:28px;
+    line-height:25px;
+    border:1px solid transparent;
     border-radius: 50%;
     text-align: center;
     font-size:15px;
     background: #3EB998;
     color: #fff;
-    border-color: transparent;
 }
 
 .ivm-actions--circle a[data-action="trash"],
@@ -149,6 +154,9 @@ td .ivm-ajax-button {
 /* =========================================================== 
     Style
 =========================================================== */
+.uk-card:not(.uk-card-default) {
+    border: 1px solid var(--border-light);
+}
 
 .ivm-tabs + div.ivm-border {
     margin-left: -1px;
@@ -167,4 +175,8 @@ td .ivm-ajax-button {
 .ivm-is-hidden .uk-card svg {
     filter: grayscale(100%);
     opacity: 0.7;
+}
+
+.ivm-is-hidden .uk-card .uk-background-muted {
+    background: #f8f8f8;
 }
