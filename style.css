@@ -62,9 +62,6 @@ button, .uk-button, .ui-button {
     font-size: 17px;
 }
 
-.uk-button-default {
-    background: #fff;
-}
 
 /* =========================================================== 
     Login
@@ -134,6 +131,10 @@ button, .uk-button, .ui-button {
 .uk-button-link:focus,
 .uk-button-link:hover {
     text-decoration: none;
+}
+
+.uk-button-default {
+    background: #fff;
 }
 
 

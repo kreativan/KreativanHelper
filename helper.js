@@ -54,7 +54,7 @@ $(document).ready(function () {
                     $('#ivm-sortable').css('opacity', '1');
                 });
 
-                // console.log(id);
+                //console.log(id);
 
             }
         });

@@ -45,6 +45,7 @@ class KreativanHelper extends WireData implements Module {
         if(strpos($_SERVER['REQUEST_URI'], $this->wire('config')->urls->admin) === 0) {
             //$this->config->styles->append($this->config->urls->siteModules . "KreativanHelper/admin.css");
             //$this->config->styles->append($this->config->urls->siteModules . "KreativanHelper/style.css");
+            $this->config->styles->append($this->config->urls->siteModules . "KreativanHelper/ivm.css");
             $this->config->scripts->append($this->config->urls->siteModules . "KreativanHelper/helper.js");
         }
 

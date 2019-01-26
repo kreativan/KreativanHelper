@@ -1,0 +1,115 @@
+:root {
+    --border: #ddd;
+}
+
+/* =========================================================== 
+    Utility
+=========================================================== */
+
+/**
+ *  Border
+ * 
+ */
+
+.ivm-border {
+    border: 1px solid var(--border);
+}
+
+/* =========================================================== 
+    Table
+=========================================================== */
+
+.ivm-tabs + .ivm-border {
+    border-top:0;
+    border-bottom:0;
+}
+
+.ivm-table th {
+    font-size:13px;
+}
+
+.ivm-table td > a {
+    margin-left:10px;
+}
+
+.ivm-table td:last-child > a:hover {
+    text-decoration: none;
+}
+
+.uk-table-striped tbody tr:nth-of-type(2n+1), .uk-table-striped > tr:nth-of-type(2n+1) {
+    background: #f9f9f9;
+}
+
+.ivm-table i {
+    font-size:18px;
+}
+
+a.ivm-is-unpublished,
+tr.ivm-is-unpublished a {
+    text-decoration: line-through;
+    color:#888;
+}
+
+a.ivm-is-hidden,
+tr.ivm-is-hidden *:not(option):not(select) {
+    color:#888;
+}
+
+
+tr.ivm-is-hidden .fa-toggle-on:before {
+    content: "\f204";
+}
+
+td a:hover {
+    text-decoration:none;
+}
+
+td .ivm-ajax-button {
+    display:inline-block;
+    width: 35px;
+    text-align:center;
+}
+
+
+
+/* =========================================================== 
+    Sortable Table
+=========================================================== */
+
+.handle {
+    padding:0 10px;
+    cursor: grab;
+    cursor: -webkit-grab;
+}
+
+.ui-sortable-helper .handle {
+    cursor: move;
+}
+
+.ui-sortable-helper {
+    background: #fff;
+    border:1px solid #ddd;
+    box-shadow: 0px 5px 25px rgba(0, 0, 0, 0.1);
+    width:100%;
+}
+
+#sortable a > .fa {
+    font-size:20px;
+}
+
+#sortable a:hover > .fa,
+#sortable a:hover {
+    text-decoration: none;
+}
+
+.ui-sortable-helper > td:not(:first-child):not(:nth-child(2)) {
+    display:none;
+}
+
+/* =========================================================== 
+    Style
+=========================================================== */
+
+.ivm-tabs + div.ivm-border {
+    margin-left: -1px;
+}
