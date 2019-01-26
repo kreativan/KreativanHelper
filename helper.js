@@ -87,7 +87,7 @@ $(document).ready(function () {
 
         // Hide icon add spinner
         thisIcon.addClass("uk-hidden");
-        thisElement.append('<i class="fa fa-cog fa-spin fa-3x fa-fw"></i>');
+        thisElement.append('<i class="fa fa-cog fa-spin fa-fw"></i>');
 
         // Get data
         var thisId = $(this).attr("data-id");
