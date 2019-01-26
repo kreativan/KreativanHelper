@@ -117,11 +117,11 @@ $(document).ready(function () {
 
                 if (thisAction == "publish") {
 
-                    thisElement.closest("tr").toggleClass("ivm-is-hidden"); 
+                    thisElement.closest(".ivm-ajax-parent").toggleClass("ivm-is-hidden"); 
 
                 } else if (thisAction == "trash") {
 
-                    thisElement.closest("tr").remove();
+                    thisElement.closest(".ivm-ajax-parent").remove();
 
                 }
 
