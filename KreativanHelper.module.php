@@ -509,7 +509,6 @@ class KreativanHelper extends WireData implements Module {
             $main_p->template = $main_name;
             $main_p->parent = $main_parent;
             $main_p->title = $main_page_title;
-            $main_p->status('hidden');
             $main_p->save();
 
             $item_p = new Page();
