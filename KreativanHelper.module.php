@@ -215,6 +215,21 @@ class KreativanHelper extends WireData implements Module {
     /* ==================================================================================
         API Methods
     ===================================================================================== */
+	
+	/**
+     *  Module Settings
+     *  
+     *  @param module   str     module class name
+     *  @param data     array   module settings  
+     * 
+     */
+    public function moduleSettings($module, $data = []) {
+
+        $old_data = $this->modules->getModuleConfigData($module);
+        $data = array_merge($old_data, $data);
+        $this->modules->saveModuleConfigData($module, $data);
+
+    }
 
     /**
      *  Change Field Options for specific template 
