@@ -31,8 +31,8 @@ if($action) {
             $p->save();
             $p->of(true);
 
-            $this->session->set("status", "message");
-            $this->session->set("alert", "{$p->title} has been unpublished");
+            $this->session->set("admin_status", "message");
+            $this->session->set("admin_alert", "{$p->title} has been unpublished");
 
         } else {
 
@@ -41,8 +41,8 @@ if($action) {
             $p->save();
             $p->of(true);
 
-            $this->session->set("status", "message");
-            $this->session->set("alert", "{$p->title} has been published");
+            $this->session->set("admin_status", "message");
+            $this->session->set("admin_alert", "{$p->title} has been published");
         }
 
         $this->session->redirect("./");
@@ -55,9 +55,9 @@ if($action) {
     if($action == "trash") {
 
         $p->trash();
-        $this->session->set("status", "warning");
-
-        $this->session->set("alert", "{$p->title} has been deleted");
+        $this->session->set("admin_status", "warning");
+        $this->session->set("admin_alert", "{$p->title} has been deleted");
+		
         $this->session->redirect("./");
 
     }
