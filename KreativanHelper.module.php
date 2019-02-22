@@ -442,16 +442,16 @@ class KreativanHelper extends WireData implements Module {
      *  addTemplateField()
      *  Add field to the specific position in template (before-after existing field)
      *  
-     *  @param  template        string, template name
+     *  @param  tmpl        	string, template name
      *  @param  new_field       string, name of the field we want to add
      *  @param  mark_field      string, field name, we will add new field before or after this field
      *  @param  before_after    string, before / after 
      * 
      */
-    public function addTemplateField($template, $new_field, $mark_field, $before_after = "after") {
+    public function addTemplateField($tmpl, $new_field, $mark_field, $before_after = "after") {
 
         // get template
-        $template = $this->templates->get("$template");
+        $template = $this->templates->get("$tmpl");
 		
 		// get existing field from the template, 
         // we will insert new field before or after this field
