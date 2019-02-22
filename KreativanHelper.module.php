@@ -14,11 +14,14 @@
  *  @method     clearCache() -- clear AIOM cache and refresh modules
  *  
  *  API:
+ *	@method 	moduleSettings() -- chanage module settings
+ *
  *  @method     setFieldOptions() -- use this method to change field option based on template
  *  @method     createRepeater() -- create Repeater field
  *  @method     setRepeaterFieldOptions() -- set field options inside a Repeater or FieldsetPage
  *  @method     createFieldsetPage() -- craete FieldsetPage field
  *  @method     createOptionsField() -- create Options field
+ *	@method		addTemplateField() -- add new field to the specific position in template (before-after existing field)
  *  
  *  Custom:
  *  @method     createTemplateStructure() -- create Main Page -> Subpages
@@ -50,17 +53,17 @@ class KreativanHelper extends WireData implements Module {
         }
 
         // display messages if session alert and status vars are set
-        if($this->session->status == 'message') {
-            $this->message($this->session->alert);
-        } elseif($this->session->status == 'warning') {
-            $this->warning($this->session->alert);
-        } elseif($this->session->status == 'error') {
-            $this->error($this->session->alert);
+        if($this->session->admin_status == 'message') {
+            $this->message($this->session->admin_alert);
+        } elseif($this->session->admin_status == 'warning') {
+            $this->warning($this->session->admin_alert);
+        } elseif($this->session->admin_status == 'error') {
+            $this->error($this->session->admin_alert);
         }
 
         // reset / delete status and alert session vars
-        $this->session->remove('status');
-        $this->session->remove('alert');
+        $this->session->remove('admin_status');
+        $this->session->remove('admin_alert');
 
         // run methods
         return $this->adminActions() . $this->adminAjax() . $this->dragDropSort();
@@ -379,6 +382,7 @@ class KreativanHelper extends WireData implements Module {
 
     /**
      *  Repeater & FieldsetPage Field Options
+	 *	(Yep, FieldsetPage works same as Repeater)
      * 
      *  @method setFieldOptions()  Using this same method with custom params. Just because repeater template name has "repaeter_" prefix
      *  @param  repeater_name   string -- name of the repeater field
@@ -433,6 +437,40 @@ class KreativanHelper extends WireData implements Module {
         }
 
     }
+	
+	/**
+     *  addTemplateField()
+     *  Add field to the specific position in template (before-after existing field)
+     *  
+     *  @param  template        string, template name
+     *  @param  new_field       string, name of the field we want to add
+     *  @param  mark_field      string, field name, we will add new field before or after this field
+     *  @param  before_after    string, before / after 
+     * 
+     */
+    public function addTemplateField($template, $new_field, $mark_field, $before_after = "after") {
+
+        // get template
+        $template = $this->templates->get("$template");
+		
+		// get existing field from the template, 
+        // we will insert new field before or after this field
+        $existingField = $template->fieldgroup->fields->get("$mark_field");
+
+        // new field that we want to insert
+        $newField = $this->fields->get("$new_field");
+
+        // insert new field before existing one
+        if($before_after == "before") {
+            $template->fieldgroup->insertBefore($newField, $existingField);
+        } else {
+            $template->fieldgroup->insertAfter($newField, $existingField);
+        }
+
+        $template->fieldgroup->save();
+
+    }
+	
 
     /**
      *  Create Template Structure
