@@ -287,7 +287,7 @@ class KreativanHelper extends WireData implements Module {
      *  Module Settings
      *  
      *  @param module   str     module class name
-     *  @param data     array   module settings  
+     *  @param data     array   module settings ["name" => "value"]
      * 
      */
     public function moduleSettings($module, $data = []) {
