@@ -12,6 +12,9 @@
  *     
  *  Utility:
  *  @method     clearCache() -- clear AIOM cache and refresh modules
+ *	@method     compileLess()  -- clear AIOM cache reset css_ prefix
+ *	@method		getFolders($dir) 
+ *	@method		uplaodFile() -- uplaod file to the destination folder
  *  
  *  API:
  *	@method 	moduleSettings() -- chanage module settings
@@ -213,6 +216,67 @@ class KreativanHelper extends WireData implements Module {
         $this->modules->refresh();
 
     }
+	
+	/**
+     *  compileLess()
+     * 
+     */
+    public function compileLess() {
+
+        // delete AIOM cached css files
+        $aiom_cache = $this->config->paths->assets."aiom";
+        $aiom_cache_files = glob("$aiom_cache/*");
+        foreach($aiom_cache_files as $file) {
+            if(is_file($file))
+            unlink($file);
+        }
+
+        $random_prefix = "css_".rand(10,1000)."_";
+        $this->moduleSettings("AllInOneMinify", ["stylesheet_prefix" => "$random_prefix"]);
+
+    }
+	
+	/**
+     *  Get Folders 
+     * 
+     */
+    public function getFolders($dir) {
+        return array_filter(glob("{$dir}*"), 'is_dir');
+    }
+	
+	
+	/**
+	 * 	Uplaod File
+	 * 
+	 * 	@param file_field_name	string, name of the file field in the uplaod form
+	 *  @param dest             string, path to upload folder
+	 *  @param valid            array, allowed file extensions
+	 * 
+	 */
+	public function uplaodFile($file_field_name = "", $dest = "", $valid = ['jpg', 'jpeg', 'gif', 'png']) {
+
+		// if there is no uplaod path trow error
+		if(!is_dir($dest)) {
+			if(!wireMkdir($dest)) $this->error("No upload path!"); 
+		}
+
+		// WireUpload
+		$upload = new WireUpload("$file_field_name");
+		$upload->setMaxFiles(1);
+		$upload->setOverwrite(true);
+		$upload->setDestinationPath($dest);
+		$upload->setValidExtensions($valid); 
+
+		try {
+			// execute upload
+			$files = $upload->execute();
+			// dump($files);
+		} catch(Exception $e) {
+			$error = $e->getMessage();
+			$this->error($error); 
+		}
+
+	}
 
 
     /* ==================================================================================
