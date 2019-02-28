@@ -247,11 +247,14 @@ class KreativanHelper extends WireData implements Module {
 	
 	/**
 	 * 	Uplaod File
+	 *
+	 *	NOTE: form needs to have enctype="multipart/form-data" attribute specified.
 	 * 
 	 * 	@param file_field_name	string, name of the file field in the uplaod form
 	 *  @param dest             string, path to upload folder
 	 *  @param valid            array, allowed file extensions
 	 * 
+	 *
 	 */
 	public function uplaodFile($file_field_name = "", $dest = "", $valid = ['jpg', 'jpeg', 'gif', 'png']) {
 
