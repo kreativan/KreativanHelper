@@ -10,7 +10,7 @@
 */
 
 
-$action  = $this->input->get->action;
+$action  = $this->input->get->admin_action;
 
 
 if($action) {

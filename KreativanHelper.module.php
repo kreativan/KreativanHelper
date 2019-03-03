@@ -10,25 +10,13 @@
  *  @method     adminAjax() -- page actions ajax
  *  @method     dragDropSort() -- drag and drop sort pages
  *     
- *  Utility:
- *  @method     clearCache() -- clear AIOM cache and refresh modules
- *	@method     compileLess()  -- clear AIOM cache reset css_ prefix
- *	@method		getFolders($dir) 
- *	@method		uplaodFile() -- uplaod file to the destination folder
- *  
- *  API:
- *	@method 	moduleSettings() -- chanage module settings
- *
- *  @method     setFieldOptions() -- use this method to change field option based on template
- *  @method     createRepeater() -- create Repeater field
- *  @method     setRepeaterFieldOptions() -- set field options inside a Repeater or FieldsetPage
- *  @method     createFieldsetPage() -- craete FieldsetPage field
- *  @method     createOptionsField() -- create Options field
- *	@method		addTemplateField() -- add new field to the specific position in template (before-after existing field)
- *  
- *  Custom:
- *  @method     createTemplateStructure() -- create Main Page -> Subpages
- *  @method     deleteTemplateStructure() -- delete pages, templates, fields
+ *  Custom UI:
+ *  @method     includeAdminFile($this, admin.php, "main");
+ *  @method     hidePages() -- gied pages from page tree
+ *  @method     adminPageEdit() -- page edit for custom module
+ *  @method     redirect() -- redirect method for custom ui    
+ *  @method     pageEditLink($id) -- get page edit link in custom ui
+ *  @method     newPageLink($parent_id) -- create new page link for custom ui 
  *
 */
 
@@ -38,7 +26,7 @@ class KreativanHelper extends WireData implements Module {
         return array(
             'title' => 'Kreativan Helper',
             'version' => 100,
-            'summary' => 'Helper methods...',
+            'summary' => 'Helper methods used in custom admin UI...',
             'icon' => 'code-fork',
             'singular' => true,
             'autoload' => true
@@ -67,10 +55,40 @@ class KreativanHelper extends WireData implements Module {
         // reset / delete status and alert session vars
         $this->session->remove('admin_status');
         $this->session->remove('admin_alert');
+		
+		
+		/**
+         *  Set @var new_back session
+         * 
+         *  This is used this to redirect back to module page,
+         *  after creating new page.
+         *  See @method newPageLink()
+         * 
+         */
+        if($this->input->get->new_back) {
+            $this->session->set("new_back", $this->input->get->new_back);
+        }
+
+        /**
+         *  If there is @var new_back session,
+         *  redirect back to the module on page save + exit
+         *  See @method redirect 
+         * 
+         */
+        if($this->session->get("new_back")) {
+            if(($this->input->post('submit_save') == 'exit') || ($this->input->post('submit_publish') == 'exit')) {
+                $this->input->post->submit_save = 1;
+                $this->addHookAfter("Pages::saved", $this, "redirect");
+            }
+        }
+
+		
+        // run hide pages hook
+        $this->addHookAfter('ProcessPageList::execute', $this, 'hidePages');
+		
 
         // run methods
         return $this->adminActions() . $this->adminAjax() . $this->dragDropSort();
-
 
     }
 
@@ -130,7 +148,7 @@ class KreativanHelper extends WireData implements Module {
      *  
      *  <table>
      *      <tbody id="ivm-sortable">
-     *          <tr data-sort='<?= $item->sort ?>' data-id='<?= $item->id ?>'>
+     *          <tr class='ivm-ajax-parent' data-sort='<?= $item->sort ?>' data-id='<?= $item->id ?>'>
      *              <td>
      *                  <div class="handle"><i class='fa fa-bars'></i></div>  
      *              </td>
@@ -175,515 +193,186 @@ class KreativanHelper extends WireData implements Module {
 
 		}
 	}
-
-    /* ==================================================================================
-        Utility
-    ===================================================================================== */
-
-    /**
-     *  clearCache()
-     *  Reload modules, compile less and clear cache
+	
+	
+	/* =========================================================== 
+        Admin Methods
+    =========================================================== */
+	
+	/**
+     *  Include Admin File
+     *  This will include admin php file from the module folder
+     *  @var module         module we are using this method in, usually its $this
+     *  @var file_name		php file name from module folder
+     *	@var page_name		used to indentify active page
+     *  
+     *  @example return $this->modules->get("KreativanHelper")->includeAdminFile($this, "admin.php", "main");
      *
      */
-    public function clearCache() {
+    public function includeAdminFile($module, $file_name, $page_name) {
 
-        /**
-         *  Reset AIOM
+        /** 
+         *  Remove @var back_url session 
+         *  Remove @var new_back session 
+         *  This will reset current session vars,
+         *  used for redirects on page save + exit
          * 
          */
+        $this->session->remove("back_url");
+        $this->session->remove("new_back");
 
-        // delete aiom cached css files
-        $aiom_cache = $this->config->paths->assets."aiom";
-        $aiom_cache_files = glob("$aiom_cache/*");
-        foreach($aiom_cache_files as $file) {
-            if(is_file($file))
-            unlink($file);
-        }
+        $vars = [
+            "this_module" => $module,
+            "page_name" => $page_name,
+            "module_edit_URL" => $this->urls->admin . "module/edit?name=" . $module->className() . "&collapse_info=1",
+            "helper" => $this,
+        ];
 
-        // add new random css prefix to avoid browser cache
-        $random_prefix = "css_".rand(10,100)."_";
-        $old_data = $this->modules->getModuleConfigData('AllInOneMinify');
-        $new_data = array('stylesheet_prefix' => $random_prefix);
-        $data = array_merge($old_data, $new_data);
-        $module = 'AllInOneMinify';
-        $this->modules->saveModuleConfigData($module, $data);
-
-        /**
-         *  Refresh Modules
-         * 
-         */
-
-        $this->modules->refresh();
+        $template_file = $this->config->paths->siteModules . $module->className() . "/" . $file_name;
+        return $this->files->render($template_file, $vars);
 
     }
 	
 	/**
-     *  compileLess()
-     * 
+     *  Intercept page tree json and remove page from it
+     *  We will remove page by its template
+     *  @var pagetemplate template of the current page in a loop
+     *  @var tmpArr Array of tamplates we wish to remove
+     *
      */
-    public function compileLess() {
+    public function hidePages(HookEvent $event){
 
-        // delete AIOM cached css files
-        $aiom_cache = $this->config->paths->assets."aiom";
-        $aiom_cache_files = glob("$aiom_cache/*");
-        foreach($aiom_cache_files as $file) {
-            if(is_file($file))
-            unlink($file);
+        // get system pages
+        $sysPagesArr = $this->modules->get("cmsCore")->sys_pages;
+
+        // aditional pages to hide by ID
+        $customArr = [];
+        if($this->hide_admin == "1") {
+            array_push($customArr, "2");
         }
 
-        $random_prefix = "css_".rand(10,1000)."_";
-        $this->moduleSettings("AllInOneMinify", ["stylesheet_prefix" => "$random_prefix"]);
-
-    }
-	
-	/**
-     *  Get Folders 
-     * 
-     */
-    public function getFolders($dir) {
-        return array_filter(glob("{$dir}*"), 'is_dir');
-    }
-	
-	
-	/**
-	 * 	Uplaod File
-	 *
-	 *	NOTE: form needs to have enctype="multipart/form-data" attribute specified.
-	 * 
-	 * 	@param file_field_name	string, name of the file field in the uplaod form
-	 *  @param dest             string, path to upload folder
-	 *  @param valid            array, allowed file extensions
-	 * 
-	 *
-	 */
-	public function uplaodFile($file_field_name = "", $dest = "", $valid = ['jpg', 'jpeg', 'gif', 'png']) {
-
-		// if there is no uplaod path trow error
-		if(!is_dir($dest)) {
-			if(!wireMkdir($dest)) $this->error("No upload path!"); 
-		}
-
-		// WireUpload
-		$upload = new WireUpload("$file_field_name");
-		$upload->setMaxFiles(1);
-		$upload->setOverwrite(true);
-		$upload->setDestinationPath($dest);
-		$upload->setValidExtensions($valid); 
-
-		try {
-			// execute upload
-			$files = $upload->execute();
-			// dump($files);
-		} catch(Exception $e) {
-			$error = $e->getMessage();
-			$this->error($error); 
-		}
-
-	}
-
-
-    /* ==================================================================================
-        API Methods
-    ===================================================================================== */
-	
-	/**
-     *  Module Settings
-     *  
-     *  @param module   str     module class name
-     *  @param data     array   module settings ["name" => "value"]
-     * 
-     */
-    public function moduleSettings($module, $data = []) {
-
-        $old_data = $this->modules->getModuleConfigData($module);
-        $data = array_merge($old_data, $data);
-        $this->modules->saveModuleConfigData($module, $data);
-
-    }
-
-    /**
-     *  Change Field Options for specific template 
-     * 
-     *  @param template     string -- Template name
-     *  @param field        string -- Field Name
-     *  @param options      array -- array of options eg: ["option" => value]
-     * 
-     *  @example $this->setFieldOptions("home", "text", ["label" => "My Text"]);
-     *  
-     */
-
-    public function setFieldOptions($template, $field, $options) {
-        // change field settings for this template
-        $t = wire('templates')->get($template);
-        $f = $t->fieldgroup->getField($field, true);
-        foreach($options as $key => $value) {
-            $f->$key = $value;
-        }
-        $this->fields->saveFieldgroupContext($f, $t->fieldgroup);//save new setting in context
-    }
-
-    /**
-     *  Create Repeater
-     * 
-     *  @param name         str -- The name of your repeater field
-     *  @param label        str -- The label for your repeater
-     *  @param fields       array -- Array of fields names to add to repeater
-     *  @param items_label  str -- Lable for repeater items eg: {title} 
-     *  @param tags         str -- Tags for the repeater field
-     * 
-     *  @example    $this->createRepeater("dropdown", "Dropdown", $fields_array, "{title}", "Repeaters");
-     * 
-     */     
-    public function createRepeater($name, $label, $fields, $items_label, $tags = "") {
-
-        // Create field
-        $f = new Field();
-        $f->type = $this->modules->get("FieldtypeRepeater");
-        $f->name = $name;
-        $f->label = $label;
-        $f->tags = $tags;
-        $f->repeaterReadyItems = 3;
-        $f->repeaterTitle = $items_label;
-
-        // Create fieldgroup
-        $fg = new Fieldgroup();
-        $fg->name = "repeater_$name";
-
-        // Add fields to fieldgroup
-        foreach($fields as $field) {
-            $fg->append($this->fields->get($field));
-        }
-
-        $fg->save();
-
-        // Create template
-        $tmp = new Template();
-        $tmp->name = "repeater_$name";
-        $tmp->flags = 8;
-        $tmp->noChildren = 1;
-        $tmp->noParents = 1;
-        $tmp->noGlobal = 1;
-        $tmp->slashUrls = 1;
-        $tmp->fieldgroup = $fg;
-
-        $tmp->save();
-
-        // Setup page for the repeater - Very important
-        $p = "for-field-{$f->id}";
-        $f->parent_id = $this->pages->get("name=$p")->id;
-        $f->template_id = $tmp->id;
-        $f->repeaterReadyItems = 3;
-
-        // Now, add the fields directly to the repeater field
-        foreach($fields as $field) {
-            $f->repeaterFields = $this->fields->get($field);
-        }
-
-        $f->save();
-
-        return $f;
-
-    }
-
-    /**
-     *  Create FieldsetPage
-     * 
-     *  This is basically same as repeater, except it's using "FieldtypeFieldsetPage" module, and using fewer params.
-     *  To change field options we can use same @method repeaterFieldOptions();
-     * 
-     *  @param name         str -- The name of your repeater field
-     *  @param label        str -- The label for your repeater
-     *  @param fields       array -- Array of fields names to add to repeater
-     *  @param tags         str -- Tags for the repeater field
-     * 
-     *  @example    $this->createFieldsetPage("my_block", "My Block", $fields_array, "Blocks");
-     * 
-     */     
-    public function createFieldsetPage($name, $label, $fields, $tags = "") {
-
-        // Create field
-        $f = new Field();
-        $f->type = $this->modules->get("FieldtypeFieldsetPage");
-        $f->name = $name;
-        $f->label = $label;
-        $f->tags = $tags;
-
-        // Create fieldgroup
-        $fg = new Fieldgroup();
-        $fg->name = "repeater_$name";
-
-        // Add fields to fieldgroup
-        foreach($fields as $field) {
-            $fg->append($this->fields->get($field));
-        }
-
-        $fg->save();
-
-        // Create template
-        $tmp = new Template();
-        $tmp->name = "repeater_$name";
-        $tmp->flags = 8;
-        $tmp->noChildren = 1;
-        $tmp->noParents = 1;
-        $tmp->noGlobal = 1;
-        $tmp->slashUrls = 1;
-        $tmp->fieldgroup = $fg;
-
-        $tmp->save();
-
-        // Setup page for the repeater - Very important
-        $p = "for-field-{$f->id}";
-        $f->parent_id = $this->pages->get("name=$p")->id;
-        $f->template_id = $tmp->id;
-
-        // Now, add the fields directly to the repeater field
-        foreach($fields as $field) {
-            $f->repeaterFields = $this->fields->get($field);
-        }
-
-        $f->save();
-
-        return $f;
-
-    }
-
-    /**
-     *  Repeater & FieldsetPage Field Options
-	 *	(Yep, FieldsetPage works same as Repeater)
-     * 
-     *  @method setFieldOptions()  Using this same method with custom params. Just because repeater template name has "repaeter_" prefix
-     *  @param  repeater_name   string -- name of the repeater field
-     *  @param  field_name      string -- name of the field
-     *  @param  options         array -- field options ["option" => "value"]
-     *  
-     *  @example $this->setRepeaterFieldOptions("my_repeater_name", "text", ["label" => "My Text"]);
-     * 
-     */
-    public function setRepeaterFieldOptions($repeater_name, $field_name, $options) {
-        $this->setFieldOptions("repeater_$repeater_name", $field_name, $options);
-    }
-
-
-    /**
-     *  Create Options Field
-     *  @param inputfield   string -- InputfieldRadios / InputfieldAsmSelect / InputfieldCheckboxes / InputfieldSelect / InputfieldSelectMultiple
-     *  @param name         string -- Field name
-     *  @param label        string -- field label
-     *  @param options_arr  array -- eg: ["one", "two", "three"]
-     *  @param tags         string -- Field tag
-     * 
-     */
-    public function createOptionsField($inputfield, $name, $label, $options_arr, $tags = "") {
-
-
-        $i = 1;
-        $options = "";
-        foreach($options_arr as $opt) {
-            $options .= $i++ . "={$opt}\n";
-        }
-
-        $f = new Field();
-        $f->type = $this->modules->get("FieldtypeOptions");
-        $f->inputfieldClass = $inputfield; // input type: radio, select etc...
-        $f->name = $name;
-        $f->label = $label;
-        $f->tags = $tags;
-        $f->save(); 
-        // save before adding options
-        // $options = "1=Blue\n2=Green\n3=Brown\n";
-        $set_options = new \ProcessWire\SelectableOptionManager();
-        $set_options->setOptionsString($f, $options, false);
-        $f->save();
-
-        // Radio options 1 column
-        if($inputfield == "InputfieldRadios") {
-            $f->required = "1";
-            $f->defaultValue = "1";
-            $f->optionColumns = "1";
-            $f->save();
-        }
-
-    }
-	
-	/**
-     *  addTemplateField()
-     *  Add field to the specific position in template (before-after existing field)
-     *  
-     *  @param  tmpl        	string, template name
-     *  @param  new_field       string, name of the field we want to add
-     *  @param  mark_field      string, field name, we will add new field before or after this field
-     *  @param  before_after    string, before / after 
-     * 
-     */
-    public function addTemplateField($tmpl, $new_field, $mark_field, $before_after = "after") {
-
-        // get template
-        $template = $this->templates->get("$tmpl");
-		
-		// get existing field from the template, 
-        // we will insert new field before or after this field
-        $existingField = $template->fieldgroup->fields->get("$mark_field");
-
-        // new field that we want to insert
-        $newField = $this->fields->get("$new_field");
-
-        // insert new field before existing one
-        if($before_after == "before") {
-            $template->fieldgroup->insertBefore($newField, $existingField);
-        } else {
-            $template->fieldgroup->insertAfter($newField, $existingField);
-        }
-
-        $template->fieldgroup->save();
-
-    }
-	
-
-    /**
-     *  Create Template Structure
-     *  @example Page -> Subpage
-     * 
-     *  @param main array -- eg: ["name" => "my_template_name", "fields" => ["One", "Two", "Three"]];
-     *  @var name string -- template name
-     *  @var fields array --  template fields
-     *  @var icon string (fa-icon) -- template icon
-     *  @var parent page id
-     *  @var page_title string
-     * 
-     *  @param item array -- eg: ["name" => "my_template_name", "fields" => ["One", "Two", "Three"]];
-     *  @var name string -- template name
-     *  @var fields array --  template fields
-     *  @var icon string (fa-icon) -- template icon
-     *  @var page_title string
-     * 
-     *  @param tag string
-     * 
-     * 
-     */
-    public function createTemplateStructure($main, $item, $tag = "") {
-
-        $main_name          = $main["name"] ? $main["name"] : "";
-        $main_fields        = $main["fields"] ? $main["fields"] : "";
-        $main_icon          = $main["icon"] ? $main["icon"] : "";
-        $main_parent        = $main["parent"] ? $main["parent"] : "";
-        $main_page_title    = $main["page_title"] ? $main["page_title"] : "";
-
-        $item_name          = $item["name"] ? $item["name"] : "";
-        $item_fields        = $item["fields"] ? $item["fields"] : "";
-        $item_icon          = $item["icon"] ? $item["icon"] : "";
-        $item_page_title    = $item["page_title"] ? $item["page_title"] : "";
-
-        // Main Fieldgroup
-        $main_fg = new Fieldgroup();
-        $main_fg->name = $main_name;
-        foreach($main_fields as $field) {
-            $main_fg->add($this->fields->get($field)); 
-        }
-        $main_fg->save();
-
-        // Main Template 
-        $main_t = new Template();
-        $main_t->name = $main_name;
-        $main_t->fieldgroup = $main_fg;
-        if(!empty($main_icon)) {
-            $main_t->pageLabelField = "$main_icon";
-        }
-        $main_t->save();
-        
-
-        // Item Fieldgroup
-        $item_fg = new Fieldgroup();
-        $item_fg->name = $item_name;
-        foreach($item_fields as $field) {
-            $item_fg->add($this->fields->get($field)); 
-        }
-        $item_fg->save();
-
-        // Item Template 
-        $item_t = new Template();
-        $item_t->name = $item_name;
-        $item_t->fieldgroup = $item_fg; // add the field group
-        $item_t->save();
-
-        // Item Template options
-        $item_t = wire('templates')->get($item_name);
-        $item_t->noChildren = "1";
-        $item_t->tags = $tag;
-        $item_t->pageLabelField = $item_icon;
-        $item_t->parentTemplates = array(wire('templates')->get($main_name)); // allowedForParents
-        $item_t->save();
-
-
-        // Main Template Options
-        $main_t = wire('templates')->get("main-menu");
-        $main_t->noParents = '-1';
-        $main_t->tags = $tag;
-        $main_t->pageLabelIcon = $main_icon;
-        $main_t->childTemplates = array(wire('templates')->get($item_name)); // allowedForChildren
-        $main_t->save();
-
-        // Create Example Pages
-        if(!empty($main_parent)) {
-
-            $main_p = new Page();
-            $main_p->template = $main_name;
-            $main_p->parent = $main_parent;
-            $main_p->title = $main_page_title;
-            $main_p->save();
-
-            $item_p = new Page();
-            $item_p->template = $item_name;
-            $item_p->parent = $main_p;
-            $item_p->title = $item_page_title;
-            $item_p->save();
-
-        }
-
-    }
-
-    /**
-     *  Delete Template Structure
-     *  @param temp_array array -- template names
-     *  @param fields_arr array -- field names
-     * 
-     */
-    public function deleteTemplateStructure($temp_array, $fields_arr) {
-
-        // 1. Delete Pages
-        foreach($temp_array as $tmp) {
-            $p_arr = $this->pages->find("template=$tmp, include=all");
-            if($p_arr->count) {
-                foreach($p_arr as $p) {
-                    $p->delete(true);
+        if($this->config->ajax) {
+
+            // manipulate the json returned and remove any pages found from array
+            $json = json_decode($event->return, true);
+            foreach($json['children'] as $key => $child){
+                $c = $this->pages->get($child['id']);
+                $pagetemplate = $c->template;
+                if(in_array($pagetemplate, $sysPagesArr) || in_array($c, $customArr)) {
+                    unset($json['children'][$key]);
                 }
             }
+            $json['children'] = array_values($json['children']);
+            $event->return = json_encode($json);
+
         }
 
-        // 2. Delete Templates
-        foreach($temp_array as $tmp) {
-            $t = $this->templates->get($tmp);
-            if($t && !empty($t)) {
-                $this->templates->delete($t);
+    }
+	
+	/**
+	 *	Edit admin page from custom UI
+	 *	@example admin/MODULE_URL/edit/id?=PAGE_ID
+	 *	This method handles redirects on page save+exit, 
+	 *	set the custom breadcrumbs etc...
+	 *	Use this method inside modules: public function executeEdit()
+	 *	
+     *	@example:
+	 *	public function executeEdit() {
+	 *		return $this->modules->get("KreativanHelper")->adminPageEdit();
+	 *	}
+	 *
+	 */
+
+	public function adminPageEdit() {
+
+        /**
+         *  Set @var back_url session var
+         *  So we can redirect back where we left
+         * 
+         */
+        if($this->input->get->back_url) {
+            $this->session->set("back_url", $this->input->get->back_url);
+        }
+
+        /**
+         *  Redirect on save + exit
+         *  based on the @var back_url using @method redirect 
+         * 
+         */
+        if($this->session->get("back_url")) {
+            if(($this->input->post('submit_save') == 'exit') || ($this->input->post('submit_publish') == 'exit')) {
+                $this->input->post->submit_save = 1;
+                $this->addHookAfter("Pages::saved", $this->modules->get("KreativanHelper"), "redirect");
             }
         }
 
-        // 3. Delete Fieldgroup
-        foreach($temp_array as $tmp) {
-            $fg = $this->fieldgroups->get($tmp);
-            if($fg && !empty($fg)) {
-                $this->fieldgroups->delete($fg);
-            }
+
+        /**
+         *  Set the breadcrumbs 
+         *  add @var back_url to the breacrumb link 
+         * 
+         */
+        $this->fuel->breadcrumbs->add(new Breadcrumb($this->page->url.$this->input->get->back_url, $this->page->title));
+
+        // Execute Page Edit
+        $processEdit = $this->modules->get('ProcessPageEdit');
+        return $processEdit->execute();
+
+    }
+	
+	/**
+     *  Page Edit Link
+     *  Use this method to generate page edit link.
+     *  @var id     integer, page id 
+     *  @example    href='{$this->pageEditLink($item->id)}';
+     * 
+     */
+    public function pageEditLink($id) {
+
+        /**
+         *	Get current url and it's last segment so we can go back to same page later on.
+         *	We are looking for pagination related segments like "page2, page3...", 
+         *  including current GET variables.
+         *	We will be passing this segment string as a GET variable via page edit link.
+         *
+         */
+        $currentURL = $_SERVER['REQUEST_URI'];
+        $url_segment = explode('/', $currentURL);
+        $url_segment = $url_segment[sizeof($url_segment)-1];
+        return $this->page->url . "edit/?id=$id&back_url={$url_segment}";
+
+    }
+
+    /**
+     *  New Page Link
+     *  Use this method to generate new page link
+     *  @var parent_id      integer, parent page id
+     *  @example            href='{$this->newPageLink($parent_id)}';
+     * 
+     */
+    public function newPageLink($parent_id) {
+        return $this->config->urls->admin . "page/add/?parent_id={$parent_id}&new_back={$this->page->name}";
+    }
+	
+	/**
+     *	This is our main redirect function.
+     *	We are using this function to redirect back to previews page 
+     *  on save+exit and save+publish actions
+     *  based on @var back_url and @var new_back session
+     * 
+     */
+    public function redirect() {
+
+        if($this->session->get("back_url")) {
+            $goto = "./../" . $this->session->get("back_url");
+        } elseif($this->session->get("new_back")) {
+            $new_back   = $this->session->get("new_back");
+            $goto       = $this->pages->get("template=admin, name=$new_back")->url;
+        } else {
+            $goto = $this->page->url;
         }
 
-        // 4. Delete Fields
-        foreach($fields_arr as $field) {
-            $f = $this->fields->get($field);
-            if($f && !empty($f)) {
-                $this->fields->delete($f);
-            }
-        }
-
-
+        $this->session->redirect($goto);
 
     }
 
