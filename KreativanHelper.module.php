@@ -241,13 +241,16 @@ class KreativanHelper extends WireData implements Module {
      *
      */
     public function hidePages(HookEvent $event){
-
+		
+		// get module settings
+        $settings =  $this->modules->get("Kreativan");
+		
         // get system pages
-        $sysPagesArr = $this->modules->get("cmsCore")->sys_pages;
+        $sysPagesArr = $settings->sys_pages;
 
         // aditional pages to hide by ID
         $customArr = [];
-        if($this->hide_admin == "1") {
+        if($settings->hide_admin == "1") {
             array_push($customArr, "2");
         }
 
