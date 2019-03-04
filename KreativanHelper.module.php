@@ -37,10 +37,10 @@ class KreativanHelper extends WireData implements Module {
 
         // if its admin page add custom css/js files
         if(strpos($_SERVER['REQUEST_URI'], $this->wire('config')->urls->admin) === 0) {
-            //$this->config->styles->append($this->config->urls->siteModules . "KreativanHelper/admin.css");
-            //$this->config->styles->append($this->config->urls->siteModules . "KreativanHelper/style.css");
-            $this->config->styles->append($this->config->urls->siteModules . "KreativanHelper/ivm.css");
-            $this->config->scripts->append($this->config->urls->siteModules . "KreativanHelper/helper.js");
+            //$this->config->styles->append($this->config->urls->siteModules . $this->className() . "/admin.css");
+            //$this->config->styles->append($this->config->urls->siteModules . $this->className() . "/style.css");
+            $this->config->styles->append($this->config->urls->siteModules . $this->className() . "/ivm.css");
+            $this->config->scripts->append($this->config->urls->siteModules . $this->className() . "/helper.js");
         }
 
         // display messages if session alert and status vars are set
