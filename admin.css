@@ -167,6 +167,9 @@ a.InputfieldRepeaterMatrixAddLink[data-label="Tabs"] > i:before {content:"\f114"
 /* =========================================================== 
     TABS
 =========================================================== */
+#PageEditTabs {
+    z-index:1;
+}
 
 #_Inputfield_TAB_options:before {
     content: "\f205";
