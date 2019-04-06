@@ -250,5 +250,16 @@ a.InputfieldRepeaterMatrixAddLink[data-label="Tabs"] > i:before {content:"\f114"
     .ProcessPageEdit .description + * {
         margin-top:0;
     }
+	
+	.ivm-has-desc > .InputfieldHeader:after {
+        content: "#";
+        margin-left:5px;
+        font-size:13px;
+        /*
+        content:"\f129";
+        font-family: "FontAwesome";
+        */
+    }
+
 
 }

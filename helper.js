@@ -142,3 +142,9 @@ $(document).ready(function () {
     });
 
 }); 
+
+
+// mark the fields that have description on page edit
+$(document).ready(function () {
+    $(".ProcessPageEdit .Inputfield p.description").closest(".Inputfield").addClass("ivm-has-desc");
+});
