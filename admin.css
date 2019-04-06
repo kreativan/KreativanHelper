@@ -134,3 +134,115 @@ a.InputfieldRepeaterMatrixAddLink[data-label="Accordion"] > i:before {content:"\
 a.InputfieldRepeaterMatrixAddLink[data-label="Twitter"] > i:before {content:"\f099"}
 a.InputfieldRepeaterMatrixAddLink[data-label="News"] > i:before {content:"\f1ea"}
 a.InputfieldRepeaterMatrixAddLink[data-label="Tabs"] > i:before {content:"\f114"}
+
+/* =========================================================== 
+    ProField Table
+=========================================================== */
+.InputfieldTable_hasLangTabs .InputfieldTable_langTabs.ui-tabs > ul {
+    padding: 0;
+    border: none;
+    background: none;
+    margin-bottom:5px;
+}
+
+.InputfieldTable_hasLangTabs .InputfieldTable_langTabs.ui-tabs > ul + div {
+    padding:0 !important;
+}
+
+.InputfieldTable_hasLangTabs .InputfieldTable_langTabs.ui-tabs {
+    border-color: transparent;
+}
+
+.InputfieldTable_hasLangTabs .InputfieldTable_langTabs.ui-tabs > ul > li {
+    margin-top:0;
+    border-radius:0;
+    background: #F0F3F7;
+}
+
+.InputfieldTable_hasLangTabs .InputfieldTable_langTabs.ui-tabs > ul > li  .ui-tabs-active {
+    background: #F0F3F7;
+}
+
+
+/* =========================================================== 
+    TABS
+=========================================================== */
+
+#_Inputfield_TAB_options:before {
+    content: "\f205";
+    font-family: "FontAwesome";
+    margin-right: 5px;
+}
+
+#_Inputfield_TAB_sidebar:before {
+    content: "\f181";
+    font-family: "FontAwesome";
+    margin-right: 5px;
+}
+
+.ProcessPageEdit-template-system #_Inputfield_TAB:before {
+   content: "\f1f9";
+    font-family: "FontAwesome";
+    margin-right: 5px;
+}
+
+.ProcessPageEdit-template-system #_ProcessPageEditContent:before {
+    content: "\f013";
+    font-family: "FontAwesome";
+    margin-right: 5px;
+}
+
+
+/* =========================================================== 
+    Description Tooltips
+=========================================================== */
+.ProcessPageEdit .Inputfield {
+    position:relative;
+}
+.ProcessPageEdit .InputfieldContent > .description {
+    position: absolute;
+    min-width:200px;
+    max-width: 400px;
+    background: white;
+    border:1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08);
+    padding: 10px;
+    bottom: 100%;
+    left:0;
+    margin-bottom: 30px;
+    z-index:99;
+    font-size: 14px;
+    color: #333 !important;
+    /*display:none;*/
+    opacity:0;
+    transition: all .2s ease;
+}
+.ProcessPageEdit .InputfieldHeader:hover + .InputfieldContent > .description {
+    display: block;
+    opacity:1;
+    margin-bottom: -7px;
+    transition: all .2s ease;
+}
+
+.ProcessPageEdit .InputfieldContent > .description:before,
+.ProcessPageEdit .InputfieldContent > .description:after {
+    content:"";
+    position:absolute;
+    top:100%;
+    left:20px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 11px 11px 0 11px;
+    border-color: white transparent transparent transparent;
+}
+.ProcessPageEdit .InputfieldContent > .description:before {
+    content:"";
+    border-color: #ddd transparent transparent transparent;
+    margin-top:1px;
+}
+
+.ProcessPageEdit .description + * {
+    margin-top:0;
+}
