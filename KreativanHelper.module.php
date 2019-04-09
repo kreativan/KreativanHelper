@@ -2,23 +2,25 @@
 /**
  *  KreativanHelper Module
  *
- *  @author Ivan Milincic <lokomotivan@gmail.com>
- *  @copyright 2018 Ivan Milincic
+ *  @author Ivan Milincic <kreativan@outlook.com>
+ *  @copyright 2019 kraetivan.net
+ *  @link 2019 http://www.kraetivan.net
  *  
  *  Admin:
- *  @method     adminActions() -- page actions
- *  @method     adminAjax() -- page actions ajax
- *  @method     dragDropSort() -- drag and drop sort pages
+ *  adminActions() -- page actions
+ *  adminAjax() -- page actions ajax
+ *  dragDropSort() -- drag and drop sort pages
  *     
  *  Custom UI:
- *  @method     includeAdminFile($this, admin.php, "main");
- *  @method     hidePages() -- gied pages from page tree
- *  @method     adminPageEdit() -- page edit for custom module
- *  @method     redirect() -- redirect method for custom ui    
- *  @method     pageEditLink($id) -- get page edit link in custom ui
- *  @method     newPageLink($parent_id) -- create new page link for custom ui 
+ *  includeAdminFile($this, admin.php, "main");
+ *  hidePages() -- gied pages from page tree
+ *  adminPageEdit() -- page edit for custom module
+ *  redirect() -- redirect method for custom ui    
+ *  pageEditLink($id) -- get page edit link in custom ui
+ *  newPageLink($parent_id) -- create new page link for custom ui 
  *
 */
+
 
 class KreativanHelper extends WireData implements Module {
 
@@ -62,7 +64,7 @@ class KreativanHelper extends WireData implements Module {
          * 
          *  This is used this to redirect back to module page,
          *  after creating new page.
-         *  See @method newPageLink()
+         *  See  newPageLink()
          * 
          */
         if($this->input->get->new_back) {
@@ -72,7 +74,7 @@ class KreativanHelper extends WireData implements Module {
         /**
          *  If there is @var new_back session,
          *  redirect back to the module on page save + exit
-         *  See @method redirect 
+         *  See  redirect 
          * 
          */
         if($this->session->get("new_back")) {
@@ -100,11 +102,10 @@ class KreativanHelper extends WireData implements Module {
      *  Admin Actions
      *  Actions that will be excecuted on $_GET request
      * 
-     *  @param action     publish, unpublish, trash...
-     *  @param id         integer, page id / selector id
+     *  @var action     publish, unpublish, trash...
+     *  @var id         integer, page id / selector id
      * 
-     *  @example        
-     *  <a href="./?action=publish&id=123"></a>
+     *  @example <a href="./?action=publish&id=123"></a>
      *
      */
     public function adminActions() {
@@ -117,8 +118,8 @@ class KreativanHelper extends WireData implements Module {
      *  This will run in init method,
      *  Module is autoload, so it will listen and process ajax requests submited to the current page "./"
      * 
-     *  @param ajax_action    publish, unpublish, trash...
-     *  @param id             integer, page id / selector id
+     *  @var ajax_action    publish, unpublish, trash...
+     *  @var id             integer, page id / selector id
      * 
      *  @example use it in a table...
      * 
@@ -143,8 +144,6 @@ class KreativanHelper extends WireData implements Module {
      * 
      *	Sort Pages drag and drop
      *  Run this in init method
-     *  
-     *  @example
      *  
      *  <table>
      *      <tbody id="ivm-sortable">
@@ -202,9 +201,9 @@ class KreativanHelper extends WireData implements Module {
 	/**
      *  Include Admin File
      *  This will include admin php file from the module folder
-     *  @param module         	module we are using this method in, usually its $this
-     *  @param file_name		php file name from module folder
-     *	@param page_name		used to indentify active page
+     *  @param Module|object $module    Module we are using this method in, usually its $this
+     *  @param string $file_name		php file name from module folder
+     *	@param string $page_name		used to indentify active page
      *  
      *  @example return $this->modules->get("KreativanHelper")->includeAdminFile($this, "admin.php", "main");
      *
@@ -236,8 +235,6 @@ class KreativanHelper extends WireData implements Module {
 	/**
      *  Intercept page tree json and remove page from it
      *  We will remove page by its template
-     *  @param pagetemplate template of the current page in a loop
-     *  @param tmpArr Array of tamplates we wish to remove
      *
      */
     public function hidePages(HookEvent $event){
@@ -274,7 +271,8 @@ class KreativanHelper extends WireData implements Module {
 	
 	/**
 	 *	Edit admin page from custom UI
-	 *	@example admin/MODULE_URL/edit/id?=PAGE_ID
+     *	@example admin/MODULE_URL/edit/id?=PAGE_ID
+     *
 	 *	This method handles redirects on page save+exit, 
 	 *	set the custom breadcrumbs etc...
 	 *	Use this method inside modules: public function executeEdit()
@@ -299,7 +297,7 @@ class KreativanHelper extends WireData implements Module {
 
         /**
          *  Redirect on save + exit
-         *  based on the @var back_url using @method redirect 
+         *  based on the @var back_url using  redirect 
          * 
          */
         if($this->session->get("back_url")) {
@@ -326,8 +324,8 @@ class KreativanHelper extends WireData implements Module {
 	/**
      *  Page Edit Link
      *  Use this method to generate page edit link.
-     *  @param id   int, page id 
-     *  @example    href='{$this->pageEditLink($item->id)}';
+     *  @param integer $id Page id 
+     *  @example href='{$this->pageEditLink($item->id)}';
      * 
      */
     public function pageEditLink($id) {
@@ -361,7 +359,7 @@ class KreativanHelper extends WireData implements Module {
      *	This is our main redirect function.
      *	We are using this function to redirect back to previews page 
      *  on save+exit and save+publish actions
-     *  based on @var back_url and @var new_back session
+     *  based on  $_SESSION["back_url"] and $_SESSION["new_back"] session
      * 
      */
     public function redirect() {
