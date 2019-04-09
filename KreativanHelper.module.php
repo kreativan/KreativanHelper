@@ -60,7 +60,7 @@ class KreativanHelper extends WireData implements Module {
 		
 		
 		/**
-         *  Set @var new_back session
+         *  Set $_SESSION["new_back"]
          * 
          *  This is used this to redirect back to module page,
          *  after creating new page.
@@ -72,7 +72,7 @@ class KreativanHelper extends WireData implements Module {
         }
 
         /**
-         *  If there is @var new_back session,
+         *  If there is $_SESSION["new_back"]
          *  redirect back to the module on page save + exit
          *  See  redirect 
          * 
@@ -211,8 +211,8 @@ class KreativanHelper extends WireData implements Module {
     public function includeAdminFile($module, $file_name, $page_name) {
 
         /** 
-         *  Remove @var back_url session 
-         *  Remove @var new_back session 
+         *  Remove $_SESSION["back_url"] 
+         *  Remove $_SESSION["new_back"] 
          *  This will reset current session vars,
          *  used for redirects on page save + exit
          * 
