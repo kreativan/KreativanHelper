@@ -219,3 +219,12 @@ td .ivm-ajax-button {
     font-size: 15px !important;
     font-weight: 500;
 }
+
+/* =========================================================== 
+    Modal
+=========================================================== */
+.uk-modal-dialog {
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0px 5px 15px 4px rgba(0, 0, 0, 0.2);
+}

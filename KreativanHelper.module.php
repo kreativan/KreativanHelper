@@ -100,8 +100,8 @@ class KreativanHelper extends WireData implements Module {
      *  Admin Actions
      *  Actions that will be excecuted on $_GET request
      * 
-     *  @var action     publish, unpublish, trash...
-     *  @var id         integer, page id / selector id
+     *  @param action     publish, unpublish, trash...
+     *  @param id         integer, page id / selector id
      * 
      *  @example        
      *  <a href="./?action=publish&id=123"></a>
@@ -117,8 +117,8 @@ class KreativanHelper extends WireData implements Module {
      *  This will run in init method,
      *  Module is autoload, so it will listen and process ajax requests submited to the current page "./"
      * 
-     *  @var ajax_action    publish, unpublish, trash...
-     *  @var id             integer, page id / selector id
+     *  @param ajax_action    publish, unpublish, trash...
+     *  @param id             integer, page id / selector id
      * 
      *  @example use it in a table...
      * 
@@ -152,7 +152,7 @@ class KreativanHelper extends WireData implements Module {
      *              <td>
      *                  <div class="handle"><i class='fa fa-bars'></i></div>  
      *              </td>
-     *              <td>My Item</td>
+     *              <td><?= $item->title ?></td>
      *          </tr>
      *      </tbody>
      *  </table>
@@ -202,9 +202,9 @@ class KreativanHelper extends WireData implements Module {
 	/**
      *  Include Admin File
      *  This will include admin php file from the module folder
-     *  @var module         module we are using this method in, usually its $this
-     *  @var file_name		php file name from module folder
-     *	@var page_name		used to indentify active page
+     *  @param module         	module we are using this method in, usually its $this
+     *  @param file_name		php file name from module folder
+     *	@param page_name		used to indentify active page
      *  
      *  @example return $this->modules->get("KreativanHelper")->includeAdminFile($this, "admin.php", "main");
      *
@@ -236,8 +236,8 @@ class KreativanHelper extends WireData implements Module {
 	/**
      *  Intercept page tree json and remove page from it
      *  We will remove page by its template
-     *  @var pagetemplate template of the current page in a loop
-     *  @var tmpArr Array of tamplates we wish to remove
+     *  @param pagetemplate template of the current page in a loop
+     *  @param tmpArr Array of tamplates we wish to remove
      *
      */
     public function hidePages(HookEvent $event){
@@ -326,7 +326,7 @@ class KreativanHelper extends WireData implements Module {
 	/**
      *  Page Edit Link
      *  Use this method to generate page edit link.
-     *  @var id     integer, page id 
+     *  @param id   int, page id 
      *  @example    href='{$this->pageEditLink($item->id)}';
      * 
      */
@@ -349,7 +349,7 @@ class KreativanHelper extends WireData implements Module {
     /**
      *  New Page Link
      *  Use this method to generate new page link
-     *  @var parent_id      integer, parent page id
+     *  @param parent_id    int, parent page id
      *  @example            href='{$this->newPageLink($parent_id)}';
      * 
      */

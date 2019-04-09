@@ -55,8 +55,9 @@ if($action) {
     if($action == "trash") {
 
         $p->trash();
+		
         $this->session->set("admin_status", "warning");
-        $this->session->set("admin_alert", "{$p->title} has been deleted");
+        $this->session->set("admin_alert", "{$p->title} has been trashed");
 		
         $this->session->redirect("./");
 
