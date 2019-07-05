@@ -250,8 +250,9 @@ class KreativanHelper extends WireData implements Module {
         if($settings->hide_admin == "1") {
             array_push($customArr, "2");
         }
-
-        if($this->config->ajax) {
+		
+		// if it's an ajax call and not page edit(eg: ?id=123)
+        if($this->config->ajax && !$this->input->get->id) {
 
             // manipulate the json returned and remove any pages found from array
             $json = json_decode($event->return, true);
