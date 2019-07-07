@@ -19,7 +19,6 @@ if($action) {
 
     $id         = $this->sanitizer->selectorValue($this->input->get->id);
     $p          = $this->pages->get($id);
-	$back_url 	= $input->get->back_url;
 
 
     // Publish / Unpublish
@@ -47,7 +46,7 @@ if($action) {
             $this->session->set("admin_alert", "{$p->title} has been published");
         }
 
-        $this->session->redirect("./$back_url");
+        $this->session->redirect("./");
 
     }
 
@@ -61,7 +60,7 @@ if($action) {
         $this->session->set("admin_status", "warning");
         $this->session->set("admin_alert", "{$p->title} has been trashed");
 		
-        $this->session->redirect("./$back_url");
+        $this->session->redirect("./");
 
     }
 
