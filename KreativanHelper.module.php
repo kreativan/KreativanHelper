@@ -209,16 +209,24 @@ class KreativanHelper extends WireData implements Module {
      *
      */
     public function includeAdminFile($module, $file_name, $page_name) {
+		
+		// save before removing session var
+        $back_url = $this->session->get("back_url");
 
-        /** 
-         *  Remove $_SESSION["back_url"] 
-         *  Remove $_SESSION["new_back"] 
+        /**
+         *  Remove @var back_url session
+         *  Remove @var new_back session
          *  This will reset current session vars,
          *  used for redirects on page save + exit
-         * 
+         *
          */
         $this->session->remove("back_url");
         $this->session->remove("new_back");
+
+        if(!empty($back_url)) {
+            $goto = $this->page->url . $back_url;
+            $this->session->redirect($goto);
+        }
 
         $vars = [
             "this_module" => $module,
@@ -290,31 +298,20 @@ class KreativanHelper extends WireData implements Module {
         /**
          *  Set @var back_url session var
          *  So we can redirect back where we left
-         * 
+         *
          */
         if($this->input->get->back_url) {
-            $this->session->set("back_url", $this->input->get->back_url);
+            // decode back_url:  ~ to &  - see @method pageEditLink()
+            $back_url_decoded = str_replace("~", "&", $this->input->get->back_url);
+            $this->session->set("back_url", $back_url_decoded);
         }
-
-        /**
-         *  Redirect on save + exit
-         *  based on the @var back_url using  redirect 
-         * 
-         */
-        if($this->session->get("back_url")) {
-            if(($this->input->post('submit_save') == 'exit') || ($this->input->post('submit_publish') == 'exit')) {
-                $this->input->post->submit_save = 1;
-                $this->addHookAfter("Pages::saved", $this->modules->get("KreativanHelper"), "redirect");
-            }
-        }
-
-
+		
         /**
          *  Set the breadcrumbs 
          *  add @var back_url to the breacrumb link 
          * 
          */
-        $this->fuel->breadcrumbs->add(new Breadcrumb($this->page->url.$this->input->get->back_url, $this->page->title));
+        $this->fuel->breadcrumbs->add(new Breadcrumb($this->page->url.$this->session->get("back_url"), $this->page->title));
 
         // Execute Page Edit
         $processEdit = $this->modules->get('ProcessPageEdit');
@@ -340,6 +337,8 @@ class KreativanHelper extends WireData implements Module {
          */
         $currentURL = $_SERVER['REQUEST_URI'];
         $url_segment = explode('/', $currentURL);
+		// encode & to ~
+        $url_segment = str_replace("&", "~", $url_segment);
         $url_segment = $url_segment[sizeof($url_segment)-1];
         return $this->page->url . "edit/?id=$id&back_url={$url_segment}";
 
