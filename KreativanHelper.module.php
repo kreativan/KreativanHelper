@@ -224,6 +224,8 @@ class KreativanHelper extends WireData implements Module {
         $this->session->remove("new_back");
 
         if(!empty($back_url)) {
+			// decode back_url:  ~ to &  - see @method pageEditLink()
+            $back_url = str_replace("~", "&", $back_url);
             $goto = $this->page->url . $back_url;
             $this->session->redirect($goto);
         }
