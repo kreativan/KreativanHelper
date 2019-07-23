@@ -261,20 +261,21 @@ class KreativanHelper extends WireData implements Module {
             array_push($customArr, "2");
         }
 		
-		// if it's an ajax call and not page edit(eg: ?id=123)
-        if($this->config->ajax && !$this->input->get->id) {
+		if($this->config->ajax) {
 
             // manipulate the json returned and remove any pages found from array
             $json = json_decode($event->return, true);
-            foreach($json['children'] as $key => $child){
-                $c = $this->pages->get($child['id']);
-                $pagetemplate = $c->template;
-                if(in_array($pagetemplate, $sysPagesArr) || in_array($c, $customArr)) {
-                    unset($json['children'][$key]);
+            if($json) {
+                foreach($json['children'] as $key => $child){
+                    $c = $this->pages->get($child['id']);
+                    $pagetemplate = $c->template;
+                    if(in_array($pagetemplate, $sysPagesArr) || in_array($c, $customArr)) {
+                        unset($json['children'][$key]);
+                    }
                 }
+                $json['children'] = array_values($json['children']);
+                $event->return = json_encode($json);
             }
-            $json['children'] = array_values($json['children']);
-            $event->return = json_encode($json);
 
         }
 
