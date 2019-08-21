@@ -63,6 +63,25 @@ if($action) {
         $this->session->redirect("./");
 
     }
+	
+	// Restore
+
+    if($action == "restore") {
+
+        $this->pages->restore($p);
+        $this->session->redirect("./");
+
+    }
+
+
+    // Delete
+
+    if($action == "delete") {
+
+        $this->pages->delete($p);
+        $this->session->redirect("./");
+
+    }
 
 
 }
