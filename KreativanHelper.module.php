@@ -315,6 +315,14 @@ class KreativanHelper extends WireData implements Module {
          * 
          */
         $this->fuel->breadcrumbs->add(new Breadcrumb($this->page->url.$this->session->get("back_url"), $this->page->title));
+		
+		// Force activate the page (for multilanguage pages)
+        $p = $this->pages->get("id={$this->input->get->id}");
+        if($p->status1105 != "" && $p->status1105 != 1) {
+            $p->of(false);
+            $p->status1105 = 1;
+            $p->save();
+        }
 
         // Execute Page Edit
         $processEdit = $this->modules->get('ProcessPageEdit');
