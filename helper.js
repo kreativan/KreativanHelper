@@ -148,3 +148,25 @@ $(document).ready(function () {
 $(document).ready(function () {
     $(".ProcessPageEdit .Inputfield p.description").closest(".Inputfield").addClass("ivm-has-desc");
 });
+
+
+/**
+ *  Group Actions
+ *  
+ */
+
+$(document).ready(function() {
+
+    let buttons = $(".ivm-group-action-button");
+    let checkbox = $(".ivm-checkbox");
+
+    checkbox.on("click", function(e) {
+        let checked = $("input.ivm-checkbox:checked");
+        if(checked.length > 0) {
+            buttons.removeAttr("disabled");
+        } else {
+            buttons.attr("disabled", "disabled");
+        }
+    });
+
+});
