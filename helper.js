@@ -144,12 +144,6 @@ $(document).ready(function () {
 }); 
 
 
-// mark the fields that have description on page edit
-$(document).ready(function () {
-    $(".ProcessPageEdit .Inputfield p.description").closest(".Inputfield").addClass("ivm-has-desc");
-});
-
-
 /**
  *  Group Actions
  *  
@@ -170,3 +164,66 @@ $(document).ready(function() {
     });
 
 });
+
+
+/**
+ *  Submit Form on click
+ *  Display modal confirm
+ *  Requierd Attributes for the clicking element:
+ *  data-form=""
+ *  data-action=""
+ *  @example <a href='#' data-form="#my-form" data-action="action_delete"></a>
+ */
+function formSubmitConfirm() {
+
+    event.preventDefault();
+    let e = event.target.parentNode;
+
+    UIkit.modal.confirm('<h3 class="uk-text-center">Are you sure?</h3>').then(function () {
+
+        let formID = e.getAttribute("data-form");
+        let action = e.getAttribute("data-action");
+
+        // add input field so we know what action to process
+        let input = document.createElement("INPUT");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", action);
+        input.setAttribute("value", "1");
+        document.querySelector(formID).appendChild(input);
+
+        // Submit Form
+        document.querySelector(formID).submit();
+
+
+    }, function () {
+
+        // console.log('Rejected.')
+
+    });
+
+}
+
+
+
+/**
+ *  Display modal confirm
+ *  this will hyst redirect to the click href on confirm
+ *  @example <a href='#' onclick="modalConfirm("Are you sure?", "this will redirect to the href link")">Button</a>
+ */
+function modalConfirm(title = "Are you sure", text = "") {
+
+    event.preventDefault();
+    let e = event.target.getAttribute("href") ? event.target : event.target.parentNode;
+
+    let message = "<h2 class='uk-text-center uk-margin-remove'>" + title + "</h2>";
+    message += (text != "") ? "<p class='uk-text-center uk-margin-small'>"+text+"</p>" : "";
+
+    UIkit.modal.confirm(message).then(function () {
+        let thisHref = e.getAttribute('href');
+        window.location.replace(thisHref);
+        console.log(e);
+    }, function () {
+        // console.log('Rejected.')
+    });
+
+}
