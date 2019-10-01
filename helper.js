@@ -177,7 +177,7 @@ $(document).ready(function() {
 function formSubmitConfirm() {
 
     event.preventDefault();
-    let e = event.target.parentNode;
+	let e = event.target.getAttribute("data-form") ? event.target : event.target.parentNode;
 
     UIkit.modal.confirm('<h3 class="uk-text-center">Are you sure?</h3>').then(function () {
 
