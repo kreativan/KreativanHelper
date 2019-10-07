@@ -22,6 +22,19 @@
     Table
 =========================================================== */
 
+.pw-table-sortable .uk-table-justify td:first-child, 
+.pw-table-sortable .uk-table-justify th:first-child {
+    padding-left:20px;
+}
+
+.pw-table-sortable .uk-table-justify td:last-child {
+    padding-right:20px;
+} 
+.pw-table-sortable .uk-table-justify th:last-child {
+    padding-right:8px;
+}
+
+
 .ivm-tabs + .ivm-border {
     border-top:0;
 }

@@ -163,7 +163,6 @@ a.InputfieldRepeaterMatrixAddLink[data-label="Tabs"] > i:before {content:"\f114"
     background: #F0F3F7;
 }
 
-
 /* =========================================================== 
     TABS
 =========================================================== */
@@ -193,77 +192,4 @@ a.InputfieldRepeaterMatrixAddLink[data-label="Tabs"] > i:before {content:"\f114"
     content: "\f013";
     font-family: "FontAwesome";
     margin-right: 5px;
-}
-
-
-/* =========================================================== 
-    Description Tooltips
-=========================================================== */
-@media(min-width: 960px) {
-
-    .ProcessPageEdit .Inputfield {
-        position:relative;
-    }
-
-    .ProcessPageEdit .InputfieldContent > .description {
-        pointer-events: none;
-        position: absolute;
-        min-width:200px;
-        max-width: 400px;
-        background: white;
-        border:1px solid #ddd;
-        border-radius: 5px;
-        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08);
-        padding: 10px;
-        bottom: 100%;
-        left:0;
-        margin-bottom: 10px;
-        z-index:99;
-        font-size: 14px;
-        color: #333 !important;
-        /*display:none;*/
-        opacity:0;
-        transition: all .2s ease;
-        transition-delay: .3s;
-    }
-    .ProcessPageEdit .InputfieldHeader:hover + .InputfieldContent > .description {
-        display: block;
-        opacity:1;
-        margin-bottom: -7px;
-        transition: all .2s ease;
-        transition-delay: .3s;
-    }
-
-    .ProcessPageEdit .InputfieldContent > .description:before,
-    .ProcessPageEdit .InputfieldContent > .description:after {
-        content:"";
-        position:absolute;
-        top:100%;
-        left:20px;
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: 11px 11px 0 11px;
-        border-color: white transparent transparent transparent;
-    }
-    .ProcessPageEdit .InputfieldContent > .description:before {
-        content:"";
-        border-color: #ddd transparent transparent transparent;
-        margin-top:1px;
-    }
-
-    .ProcessPageEdit .description + * {
-        margin-top:0;
-    }
-
-    .ivm-has-desc > .InputfieldHeader:after {
-        content: "#";
-        margin-left:5px;
-        font-size:13px;
-        /*
-        content:"\f129";
-        font-family: "FontAwesome";
-        */
-    }
-
 }
