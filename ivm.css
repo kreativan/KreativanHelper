@@ -21,6 +21,9 @@
 /* =========================================================== 
     Table
 =========================================================== */
+.pw-table-responsive {
+    margin-top:0;
+}
 
 .pw-table-sortable .uk-table-justify td:first-child, 
 .pw-table-sortable .uk-table-justify th:first-child {
@@ -75,8 +78,8 @@ tr.ivm-is-hidden .fa-toggle-on:before {
 
 td a:hover {
     text-decoration:none;
+    color:#e83561 !important;
 }
-
 td .ivm-ajax-button {
     display:inline-block;
     width: 35px;

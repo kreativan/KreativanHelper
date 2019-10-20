@@ -148,19 +148,35 @@ $(document).ready(function () {
  *  Group Actions
  *  
  */
+window.addEventListener("DOMContentLoaded", function() {
 
-$(document).ready(function() {
+    var buttons = $(".ivm-group-action-button");
+    var checkbox = $(".ivm-checkbox");
 
-    let buttons = $(".ivm-group-action-button");
-    let checkbox = $(".ivm-checkbox");
-
+    // Enable Disable Buttons
     checkbox.on("click", function(e) {
+
+        let checked = $("input.ivm-checkbox:checked");
+
+        if(checked.length > 0) {
+            buttons.removeAttr("disabled");
+        } else {
+            buttons.attr("disabled", "disabled");
+        }
+        
+    });
+    
+    // Select All
+    var checkboxAll = $("#ivm-checkbox-all");
+    checkboxAll.on("click", function(e) {
+        $('.ivm-checkbox:checkbox').not(this).prop('checked', this.checked); 
         let checked = $("input.ivm-checkbox:checked");
         if(checked.length > 0) {
             buttons.removeAttr("disabled");
         } else {
             buttons.attr("disabled", "disabled");
         }
+
     });
 
 });
@@ -174,16 +190,16 @@ $(document).ready(function() {
  *  data-action=""
  *  @example <a href='#' data-form="#my-form" data-action="action_delete"></a>
  */
-function formSubmitConfirm() {
+function formSubmitConfirm(title = "Are you sure?") {
 
     event.preventDefault();
-	let e = event.target.getAttribute("data-form") ? event.target : event.target.parentNode;
+    let e = event.target.getAttribute("data-form") ? event.target : event.target.parentNode;
 
-    UIkit.modal.confirm('<h3 class="uk-text-center">Are you sure?</h3>').then(function () {
+    UIkit.modal.confirm("<h3 class='uk-text-center'>"+title+"</h3>").then(function () {
 
         let formID = e.getAttribute("data-form");
         let action = e.getAttribute("data-action");
-
+        
         // add input field so we know what action to process
         let input = document.createElement("INPUT");
         input.setAttribute("type", "hidden");
