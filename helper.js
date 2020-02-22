@@ -165,12 +165,14 @@ window.addEventListener("DOMContentLoaded", function() {
  *  data-action=""
  *  @example <a href='#' data-form="#my-form" data-action="action_delete"></a>
  */
-function formSubmitConfirm(title = "Are you sure?") {
+function formSubmitConfirm(title = "Are you sure?", text = "") {
 
     event.preventDefault();
     let e = event.target.getAttribute("data-form") ? event.target : event.target.parentNode;
+		
+		text = (text != "") ? "<p class='uk-text-center uk-text-muted uk-margin-small'>"+text+"</p>" : "";
 
-    UIkit.modal.confirm("<h3 class='uk-text-center'>"+title+"</h3>").then(function () {
+    UIkit.modal.confirm("<h3 class='uk-text-center'>"+title+"</h3>" + text).then(function () {
 
         let formID = e.getAttribute("data-form");
         let action = e.getAttribute("data-action");
