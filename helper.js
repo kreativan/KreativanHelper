@@ -1,31 +1,6 @@
 $(document).ready(function () {
 
     /**
-     *  Display modal confirm
-     *  It's just gonna prompt you "are you sure" and redirect to the same url
-     *  Using this on URLs with $_GET variables. Eg: for deleteing a page, ./?action=delete&id=123
-     * 
-     */
-    function modalConfirm() {
-        var element = document.querySelectorAll('.ivm-modal-confirm');
-        for (let i = 0; i < element.length; i++) {
-            UIkit.util.on(element[i], 'click', function (e) {
-                e.preventDefault();
-                e.target.blur();
-                UIkit.modal.confirm('<h3 class="uk-text-center">Are you sure?</h3>').then(function () {
-                    let thisHref = element[i].getAttribute('href');
-                    // console.log(thisHref);
-                    window.location.replace(thisHref);
-                }, function () {
-                    // console.log('Rejected.')
-                });
-            });
-            // console.log(element[i].getAttribute('href'));
-        }
-    }
-    modalConfirm();
-
-    /**
      *  Drag and drop sort pages
      *  @var id int
      * 
