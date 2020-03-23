@@ -207,6 +207,10 @@ function modalConfirm(title = "Are you sure", text = "") {
 
     event.preventDefault();
     let e = event.target.getAttribute("href") ? event.target : event.target.parentNode;
+	
+	// close drop menu if exists
+    let drop = e.closest(".uk-drop");
+    if(drop) UIkit.drop(drop).hide();
 
     let message = "<h2 class='uk-text-center uk-margin-remove'>" + title + "</h2>";
     message += (text != "") ? "<p class='uk-text-center uk-margin-small'>"+text+"</p>" : "";
