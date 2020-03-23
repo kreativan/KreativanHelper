@@ -19,7 +19,7 @@ if($action) {
 
     $id         = $this->sanitizer->selectorValue($this->input->get->id);
     $p          = $this->pages->get($id);
-
+	$urlSegment = ($this->input->urlSegment1) ? $this->input->urlSegment1 : "";
 
     // Publish / Unpublish
 
@@ -46,7 +46,7 @@ if($action) {
             $this->session->set("admin_alert", "{$p->title} has been published");
         }
 
-        $this->session->redirect("./");
+        $this->session->redirect("./$urlSegment");
 
     }
 
@@ -60,7 +60,7 @@ if($action) {
         $this->session->set("admin_status", "warning");
         $this->session->set("admin_alert", "{$p->title} has been trashed");
 		
-        $this->session->redirect("./");
+        $this->session->redirect("./$urlSegment");
 
     }
 	
@@ -69,7 +69,7 @@ if($action) {
     if($action == "restore") {
 
         $this->pages->restore($p);
-        $this->session->redirect("./");
+        $this->session->redirect("./$urlSegment");
 
     }
 
@@ -79,7 +79,7 @@ if($action) {
     if($action == "delete") {
 
         $this->pages->delete($p);
-        $this->session->redirect("./");
+        $this->session->redirect("./$urlSegment");
 
     }
 
@@ -99,6 +99,7 @@ if($this->input->post->admin_action_group_publish) {
 
     $ids = $this->sanitizer->selectorValue($this->input->post->admin_items);
     $pgs = $this->pages->find("id=$ids, include=all");
+	$urlSegment = ($this->input->urlSegment1) ? $this->input->urlSegment1 : "";
 
     if($pgs->count) {
         foreach($pgs as $p) {
@@ -131,7 +132,7 @@ if($this->input->post->admin_action_group_publish) {
     $this->session->set("admin_status", "message");
     $this->session->set("admin_alert", $message);
 
-    $this->session->redirect("./");
+    $this->session->redirect("./$urlSegment");
 
 }
 
@@ -144,6 +145,7 @@ if($this->input->post->admin_action_group_delete) {
 
     $ids = $this->sanitizer->selectorValue($this->input->post->admin_items);
     $pgs = $this->pages->find("id=$ids, include=all");
+	$urlSegment = ($this->input->urlSegment1) ? $this->input->urlSegment1 : "";
 
     if($pgs->count) {
         foreach($pgs as $p) $p->trash();
@@ -155,7 +157,7 @@ if($this->input->post->admin_action_group_delete) {
     $this->session->set("admin_status", "message");
     $this->session->set("admin_alert", $message);
 
-    $this->session->redirect("./");
+    $this->session->redirect("./$urlSegment");
 
 }
 
@@ -168,6 +170,7 @@ if($this->input->post->admin_action_group_clone) {
 
     $ids = $this->sanitizer->selectorValue($this->input->post->admin_items);
     $pgs = $this->pages->find("id=$ids, include=all");
+	$urlSegment = ($this->input->urlSegment1) ? $this->input->urlSegment1 : "";
 
     if($pgs->count) {
         foreach($pgs as $p) $this->pages->clone($p);
@@ -179,6 +182,6 @@ if($this->input->post->admin_action_group_clone) {
     $this->session->set("admin_status", "message");
     $this->session->set("admin_alert", $message);
 
-    $this->session->redirect("./");
+    $this->session->redirect("./$urlSegment");
 
 }
