@@ -17,9 +17,10 @@ $action  = $this->input->get->admin_action;
 if($action) {
 
 
-    $id         = $this->sanitizer->selectorValue($this->input->get->id);
-    $p          = $this->pages->get($id);
-	$urlSegment = ($this->input->urlSegment1) ? $this->input->urlSegment1 : "";
+    $id = $this->sanitizer->selectorValue($this->input->get->id);
+    $p = $this->pages->get($id);
+	$urlSegment = $this->sanitizer->text($input->get->url_segment);
+	$urlSegment = (!empty($urlSegment) && $urlSegment != "") ? $urlSegment : "";
 
     // Publish / Unpublish
 
@@ -99,7 +100,6 @@ if($this->input->post->admin_action_group_publish) {
 
     $ids = $this->sanitizer->selectorValue($this->input->post->admin_items);
     $pgs = $this->pages->find("id=$ids, include=all");
-	$urlSegment = ($this->input->urlSegment1) ? $this->input->urlSegment1 : "";
 
     if($pgs->count) {
         foreach($pgs as $p) {
@@ -132,7 +132,7 @@ if($this->input->post->admin_action_group_publish) {
     $this->session->set("admin_status", "message");
     $this->session->set("admin_alert", $message);
 
-    $this->session->redirect("./$urlSegment");
+	$this->session->redirect("./{$this->input->urlSegment1}{$this->input->urlSegment2}");
 
 }
 
@@ -145,7 +145,6 @@ if($this->input->post->admin_action_group_delete) {
 
     $ids = $this->sanitizer->selectorValue($this->input->post->admin_items);
     $pgs = $this->pages->find("id=$ids, include=all");
-	$urlSegment = ($this->input->urlSegment1) ? $this->input->urlSegment1 : "";
 
     if($pgs->count) {
         foreach($pgs as $p) $p->trash();
@@ -157,7 +156,7 @@ if($this->input->post->admin_action_group_delete) {
     $this->session->set("admin_status", "message");
     $this->session->set("admin_alert", $message);
 
-    $this->session->redirect("./$urlSegment");
+    $this->session->redirect("./{$this->input->urlSegment1}{$this->input->urlSegment2}");
 
 }
 
@@ -170,7 +169,6 @@ if($this->input->post->admin_action_group_clone) {
 
     $ids = $this->sanitizer->selectorValue($this->input->post->admin_items);
     $pgs = $this->pages->find("id=$ids, include=all");
-	$urlSegment = ($this->input->urlSegment1) ? $this->input->urlSegment1 : "";
 
     if($pgs->count) {
         foreach($pgs as $p) $this->pages->clone($p);
@@ -182,6 +180,6 @@ if($this->input->post->admin_action_group_clone) {
     $this->session->set("admin_status", "message");
     $this->session->set("admin_alert", $message);
 
-    $this->session->redirect("./$urlSegment");
+    $this->session->redirect("./{$this->input->urlSegment1}{$this->input->urlSegment2}");
 
 }
