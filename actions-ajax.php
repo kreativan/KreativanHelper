@@ -12,7 +12,10 @@
 $ajax_action = $this->input->post->ajax_action;
 
 if($ajax_action) {
-
+    
+    // disable all notice for ajax actions
+    // to prevent errors and return fails
+    @error_reporting(E_ALL ^ E_NOTICE);
 
     $id             = $this->sanitizer->selectorValue($this->input->post->id);
     $p              = $this->pages->get($id);
