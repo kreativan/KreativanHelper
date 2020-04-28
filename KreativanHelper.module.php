@@ -372,26 +372,30 @@ class KreativanHelper extends WireData implements Module {
   }
 
   // Check if multilanguage is installed
-  public function isMultiLang() {
+  public function isMultiLang($debug = false) {
 
     $errors = [];
 
     $lng_modules = [
-    "FieldtypePageTitleLanguage",
-    "FieldtypeTextLanguage",
-    "FieldtypeTextareaLanguage",
-    "LanguageSupportPageNames",
-    "LanguageSupportFields",
-    "LanguageTabs",
+      "FieldtypePageTitleLanguage",
+      "FieldtypeTextLanguage",
+      "FieldtypeTextareaLanguage",
+      "LanguageSupportPageNames",
+      "LanguageSupportFields",
+      "LanguageTabs",
     ];
 
     foreach($lng_modules as $m) {
       if($this->modules->isInstalled($m) === false) {
-          $errors[] = $m . " is missing.";
+        $errors[] = $m . " is missing.";
       }
     }
 
-    return count($errors) > 0 ? $errors : true;
+    if($debug === true) {
+      return count($errors) > 0 ? $errors : true;
+    } else {
+      return count($errors) > 0 ? false : true;
+    }
 
   }
 
