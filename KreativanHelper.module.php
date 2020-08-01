@@ -5,7 +5,6 @@
  *  @author Ivan Milincic <kreativan@outlook.com>
  *  @copyright 2020 Ivan Milincic
  *
- *
 */
 
 class KreativanHelper extends WireData implements Module {
@@ -21,70 +20,126 @@ class KreativanHelper extends WireData implements Module {
     );
   }
 
+  public function __construct() {
+    $this->module_url = $this->config->urls->siteModules.$this->className();
+  }
+
   public function init() {
 
-    // if its admin page add custom css files
-    if(strpos($_SERVER['REQUEST_URI'], $this->wire('config')->urls->admin) === 0) {
-      $this->config->styles->append($this->config->urls->siteModules.$this->className()."/admin.css");
-      if($this->fa == "1") {
-        $this->config->styles->append($this->fa_link);
+    if($this->isAdminPage()) {
+
+      $this->config->styles->append($this->module_url."/admin.css");
+      if($this->fa == "1") $this->config->styles->append($this->fa_link);
+      if($this->load_admin_style == "1") $this->config->styles->append($this->module_url."/style.css");
+      $this->config->scripts->append($this->module_url."/helper.js");
+      $this->config->scripts->append($this->module_url."/repeater.js");
+
+      // include hooks file
+      include("_hooks.php");
+      include("actions.php");
+      include("actions-ajax.php");
+
+      // js
+      // console.log(ProcessWire.config.kreativanHelper);
+      $this->config->js('kreativanHelper', [
+        'templatesPath' => "{$this->config->paths->templates}",
+        'templatesUrl' => "{$this->config->urls->templates}",
+      ]);
+
+      /**
+       *  Set $_SESSION["new_back"]
+       *  This is used this to redirect back to module page,
+       *  after creating new page.
+       *  @see $this->newPageLink()
+       */
+      if($this->input->get->new_back) {
+        $this->session->set("new_back", $this->input->get->new_back);
       }
-      if($this->load_admin_style == "1") {
-        $this->config->styles->append($this->config->urls->siteModules.$this->className()."/style.css");
+
+      /**
+       *  If there is $_SESSION["new_back"]
+       *  redirect back to the module on page save + exit
+       *  @see $this->redirect()
+       */
+      if($this->session->get("new_back")) {
+        if(($this->input->post('submit_save') == 'exit') || ($this->input->post('submit_publish') == 'exit')) {
+          $this->input->post->submit_save = 1;
+          $this->addHookAfter("Pages::saved", $this, "redirect");
+        }
       }
-      $this->config->scripts->append($this->config->urls->siteModules.$this->className()."/helper.js");
+
+      // run hide pages hook
+      $this->addHookAfter('ProcessPageList::execute', $this, 'hidePages');
+
     }
-
-    // display messages if session alert and status vars are set
-    if($this->session->admin_status == 'message') {
-      $this->message($this->session->admin_message);
-    } else if($this->session->admin_status == 'warning') {
-      $this->warning($this->session->admin_message);
-    } elseif($this->session->admin_status == 'error') {
-      $this->error($this->session->admin_message);
-    }
-
-    // reset / delete status and alert session vars
-    $this->session->remove('admin_status');
-    $this->session->remove('admin_message');
-
-
-    /**
-     *  Set $_SESSION["new_back"]
-     *
-     *  This is used this to redirect back to module page,
-     *  after creating new page.
-     *  @see newPageLink()
-     *
-     */
-    if($this->input->get->new_back) {
-      $this->session->set("new_back", $this->input->get->new_back);
-    }
-
-    /**
-     *  If there is $_SESSION["new_back"]
-     *  redirect back to the module on page save + exit
-     *  @see redirect()
-     *
-     */
-    if($this->session->get("new_back")) {
-      if(($this->input->post('submit_save') == 'exit') || ($this->input->post('submit_publish') == 'exit')) {
-        $this->input->post->submit_save = 1;
-        $this->addHookAfter("Pages::saved", $this, "redirect");
-      }
-    }
-
-    // run hide pages hook
-    $this->addHookAfter('ProcessPageList::execute', $this, 'hidePages');
 
     // run methods
-    return $this->adminActions() . $this->adminAjax() . $this->dragDropSort();
+    return $this->dragDropSort();
 
   }
 
-  /* ===========================================================
-    Admin Methods
-  =========================================================== */
+  /* ----------------------------------------------------------------
+    Helpers
+  ------------------------------------------------------------------- */
+  // Check if current page is admin page
+  public function isAdminPage() {
+    if(strpos($_SERVER['REQUEST_URI'], $this->wire('config')->urls->admin) === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   *  Generate admin action link
+   *  @param string $action_name - name of the action $input->get->{action_name}
+   *  @param string $item_id - related page id
+   *  dotn forget to clear ~ from redirect_segment before redirect
+  */
+ public function actionURL($action_name, $item_id) {
+   $url_segments = $this->input->urlSegment1;
+   $url_segments .= ($this->input->urlSegment2) ? "/{$this->input->urlSegment2}" : "";
+   $url_segments .= ($this->input->urlSegment3) ? "/{$this->input->urlSegment3}" : "";
+   $i = 0;
+   foreach($this->input->get as $key => $value) {
+     if($i++ > 0) {
+       $url_segments .= "~&${key}={$value}~";
+     } else {
+       $url_segments .= "~?${key}={$value}~";
+     }
+   }
+   $action_url = $this->page->url . "?admin_action=$action_name&id=$item_id&redirect_segment={$url_segments}";
+   return $action_url;
+ }
+
+ /**
+  *  Page Edit Link
+  *  Use this method to generate page edit link.
+  *  @param integer $id  Page ID
+  *  @example href='{$this->pageEditLink($item->id)}';
+  */
+  public function pageEditLink($id) {
+    $currentURL = $_SERVER['REQUEST_URI'];
+    $url_segment = explode('/', $currentURL);
+    $url_segment = $url_segment[sizeof($url_segment)-1];
+    // encode & to ~
+    $url_segment = str_replace("&", "~", $url_segment);
+    return $this->page->url . "edit/?id=$id&back_url={$url_segment}";
+  }
+
+  /**
+   *  New Page Link
+   *  Use this method to generate new page link
+   *  @param integer $parent_id  Parent page id
+   *  @example href='{$this->newPageLink($parent_id)}';
+   */
+   public function newPageLink($parent_id) {
+     return $this->config->urls->admin . "page/add/?parent_id={$parent_id}&new_back={$this->page->name}";
+   }
+
+  /* ----------------------------------------------------------------
+    Admin UI
+  ------------------------------------------------------------------- */
 
   /**
    *  Include Admin File
@@ -106,24 +161,23 @@ class KreativanHelper extends WireData implements Module {
      *  Remove @var new_back session
      *  This will reset current session vars,
      *  used for redirects on page save + exit
-     *
      */
     $this->session->remove("back_url");
     $this->session->remove("new_back");
 
     if(!empty($back_url)) {
-        // decode back_url:  ~ to &  - see @method pageEditLink()
-        $back_url = str_replace("~", "&", $back_url);
-        $goto = $this->page->url . $back_url;
-        $this->session->redirect($goto);
+      // decode back_url:  ~ to &  - see @method pageEditLink()
+      $back_url = str_replace("~", "&", $back_url);
+      $goto = $this->page->url . $back_url;
+      $this->session->redirect($goto);
     }
 
     $vars = [
-        "this_module" => $module,
-        "page_name" => $page_name,
-        "module_edit_URL" => $this->urls->admin . "module/edit?name=" . $module->className() . "&collapse_info=1",
-        "helper" => $this,
-        "api" => $this->modules->get("cmsApi"),
+      "this_module" => $module,
+      "page_name" => $page_name,
+      "module_edit_URL" => $this->urls->admin . "module/edit?name=" . $module->className() . "&collapse_info=1",
+      "helper" => $this,
+      "module_dir" => $this->config->paths->siteModules . $module->className() . "/",
     ];
 
     $template_file = $this->config->paths->siteModules . $module->className() . "/" . $file_name;
@@ -143,8 +197,9 @@ class KreativanHelper extends WireData implements Module {
 
     // aditional pages to hide by ID
     $customArr = [];
-    if($this->hide_admin == "1") {
-      array_push($customArr, "2");
+    if($this->hide_system_pages == "1") {
+      $customArr[] = "2"; // admin
+      $customArr[] = $this->pages->get("template=system");
     }
 
     if($this->config->ajax) {
@@ -168,38 +223,9 @@ class KreativanHelper extends WireData implements Module {
   }
 
   /**
-   *  Admin Actions
-   *  Actions that will be excecuted on $_GET request
-   *  @var action     publish, unpublish, trash...
-   *  @var id         integer, page id / selector id
-   */
-  public function adminActions() {
-    $this->files->include("./actions.php");
-  }
-
-
-  /**
-   *  Process Ajax request
-   *  This will run in init method,
-   *  Module is autoload, so it will listen and process ajax requests submited to the current page "./"
-   *  @var ajax_action    publish, unpublish, trash...
-   *  @var id             integer, page id / selector id
+   *	Sort Pages drag and drop
+   *  Run this in init method
    *
-   */
-  public function adminAjax() {
-
-    if($this->config->ajax) {
-
-      $this->files->include("./actions-ajax.php");
-
-    }
-
-  }
-
-    /**
-     *	Sort Pages drag and drop
-     *  Run this in init method
-     *
 	 */
 	public function dragDropSort() {
 
@@ -234,6 +260,7 @@ class KreativanHelper extends WireData implements Module {
       }
 
 		}
+
   }
 
 
@@ -242,7 +269,6 @@ class KreativanHelper extends WireData implements Module {
     /**
      *  Set @var back_url session var
      *  So we can redirect back where we left
-     *
      */
     if($this->input->get->back_url) {
       // decode back_url:  ~ to &  - see @method pageEditLink()
@@ -250,11 +276,9 @@ class KreativanHelper extends WireData implements Module {
       $this->session->set("back_url", $back_url_decoded);
     }
 
-
     /**
      *  Set the breadcrumbs
      *  add $_SESSION["back_url"] to the breacrumb link
-     *
      */
     $this->fuel->breadcrumbs->add(new Breadcrumb($this->page->url.$this->session->get("back_url"), $this->page->title));
 
@@ -278,66 +302,11 @@ class KreativanHelper extends WireData implements Module {
 
   }
 
-
-  public function urlSegment() {
-    /**
-     *	Get current url segments.
-     *	We are looking for pagination segments: "page2, page3...",
-     *  And current GET variables: "?id=123..."
-     *	We will be adding this segment at the end of the links.
-    */
-
-    $currentURL = $_SERVER['REQUEST_URI'];
-    $url_segment = explode('/', $currentURL);
-    $url_segment = $url_segment[sizeof($url_segment)-1];
-    return $url_segment;
-
-  }
-
-
-  /**
-   *  Page Edit Link
-   *  Use this method to generate page edit link.
-   *  @param integer $id  Page ID
-   *  @example href='{$this->pageEditLink($item->id)}';
-   *
-   */
-  public function pageEditLink($id) {
-
-    /**
-     *	Get current url and it's last segment so we can go back to same page later on.
-     *	We are looking for pagination related segments like "page2, page3...",
-     *  including current GET variables.
-     *	We will be passing this segment string as a GET variable via page edit link.
-     *
-     */
-    $currentURL = $_SERVER['REQUEST_URI'];
-    $url_segment = explode('/', $currentURL);
-    $url_segment = $url_segment[sizeof($url_segment)-1];
-    // encode & to ~
-    $url_segment = str_replace("&", "~", $url_segment);
-    return $this->page->url . "edit/?id=$id&back_url={$url_segment}";
-
-  }
-
-  /**
-   *  New Page Link
-   *  Use this method to generate new page link
-   *  @param integer $parent_id  Parent page id
-   *  @example href='{$this->newPageLink($parent_id)}';
-   *
-   */
-  public function newPageLink($parent_id) {
-    return $this->config->urls->admin . "page/add/?parent_id={$parent_id}&new_back={$this->page->name}";
-  }
-
-
   /**
    *	This is our main redirect function.
    *	We are using this function to redirect back to previews page
    *  on save+exit and save+publish actions
    *  based on $_SESSION["back_url"] and $_SESSION["new_back"]
-   *
    */
   public function redirect() {
 
@@ -354,21 +323,37 @@ class KreativanHelper extends WireData implements Module {
 
   }
 
-  /* ----------------------------------------------------------------
-    Helper Methods
-  ------------------------------------------------------------------- */
+  /* ------------------------------------------------------------------------------
+    Methods
+  --------------------------------------------------------------------------------- */
 
   /**
    *  Save Module Settings
-   *
    *  @param string $module     module class name
    *  @param array $data        module settings
-   *
    */
   public function saveModule($module, $data = []) {
     $old_data = $this->modules->getModuleConfigData($module);
     $data = array_merge($old_data, $data);
     $this->modules->saveModuleConfigData($module, $data);
+  }
+
+  /**
+   *  Activate page for all languages
+   *  @param page $p
+   */
+  public function setMultilangPage($p) {
+    $languages = wire("languages");
+    if(count($languages) > 0) {
+      foreach($languages as $lng)  {
+        if($lng->name != "default") {
+          $status = "status{$lng->id}";
+          $p->of(false);
+          $p->{$status} = 1;
+          $p->save();
+        }
+      }
+    }
   }
 
   // Check if multilanguage is installed
@@ -380,6 +365,7 @@ class KreativanHelper extends WireData implements Module {
       "FieldtypePageTitleLanguage",
       "FieldtypeTextLanguage",
       "FieldtypeTextareaLanguage",
+      "LanguageSupport",
       "LanguageSupportPageNames",
       "LanguageSupportFields",
       "LanguageTabs",
@@ -399,39 +385,25 @@ class KreativanHelper extends WireData implements Module {
 
   }
 
-  /* ----------------------------------------------------------------
-    AIOM
-  ------------------------------------------------------------------- */
-  
   /**
-   *  Clear AIOM cache
-	 *	@see compileLess()
-	 *	Reload modules
-  */
-  public function clearCache() {
-		$this->compileLess();
-    $this->modules->refresh();
-  }
-
-  /**
-   *  Clear AIOM cache
-	 *	Delete aiom cache files and change css_prefix
-   *	to force browser to clear cache.
-   *  @return void
-  */
-  public function compileLess() {
-
-    // delete AIOM cached css files
-    $aiom_cache = $this->config->paths->assets."aiom";
-    $aiom_cache_files = glob("$aiom_cache/*");
-    foreach($aiom_cache_files as $file) {
-        if(is_file($file))
-        unlink($file);
+   *  Upload Image
+   *  @param string $field_name - name of a file field in a form
+   *  @param string $dest - upload destination
+   *  @param string $rename - new file name without extension (optional)
+   */
+  public function uploadImage($field_name, $dest, $rename = "") {
+    if(is_array($_FILES["$field_name"]["name"])) {
+      $this_file   = $_FILES["$field_name"]["name"][0];
+      $temp_file   = $_FILES["$field_name"]["tmp_name"][0];
+    } else {
+      $this_file   = $_FILES["$field_name"]["name"];
+      $temp_file   = $_FILES["$field_name"]["tmp_name"];
     }
-
-    $random_prefix = "css_".rand(10,1000)."_";
-    $this->moduleSettings("AllInOneMinify", ["stylesheet_prefix" => "$random_prefix"]);
-
+    if($this_file && !empty($this_file) && $this_file != "") {
+      $this_file_ext = pathinfo($this_file, PATHINFO_EXTENSION);
+      $rename = $rename != "" ? "{$rename}.{$this_file_ext}" : $this_file;
+      move_uploaded_file($temp_file, "{$dest}{$rename}");
+    }
   }
 
 }

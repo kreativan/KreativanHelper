@@ -1,26 +1,47 @@
-@import url('https://fonts.googleapis.com/css?family=Barlow:400,500;600');
+/* @import "./inter-font/inter.css"; */
+/*@import url('https://fonts.googleapis.com/css?family=Barlow:wght@400;600&display=swap');*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 :root {
-    --font: 'Barlow', sans-serif;
-    --box-shadow: 0 2px 5px -1px rgba(0,0,0,.08);
-    --border-color: #eaeaea;
-    --padding: 20px;
-    --dark-color: #354B60;
+  --muted-color: #777;
+  --box-shadow: 0 2px 5px -1px rgba(0,0,0,.08);
+  --border-color: #d9e1ea;
+  --padding: 20px;
+  --font: 'Inter', sans-serif
 }
 
-/* =========================================================== 
-    Style
-=========================================================== */
-
 html, body {
-    background: #f5f5f5;
+  background: #f5f5f5;
+  font-size:16px;
+}
+
+.InputfieldHeader,
+.uk-navbar-nav>li>a,
+.uk-tab>*>a {
+  font-size:16px;
+}
+
+html, body,
+.uk-drop *:not(i),
+.uk-navbar-nav>li>a,
+.uk-h1,.uk-h2,.uk-h3,.uk-h4, .uk-h5, .uk-h6,
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font);
+}
+
+.InputfieldContent > .description {
+  font-size:16px !important;
 }
 
 #PageListContainer {
     padding:var(--padding);
     background: #fff;
     border:1px solid var(--border-color);
-    box-shadow:var(--box-shadow);
+    /*box-shadow:var(--box-shadow);*/
+}
+
+#ProcessPageEdit #PageListContainer  {
+    box-shadow: none;
 }
 
 #ProcessPageEditContent.Inputfield {
@@ -34,7 +55,7 @@ html, body {
     margin-bottom:20px;
     padding:var(--padding);
     border:1px solid var(--border-color);
-    box-shadow:var(--box-shadow);
+    /*box-shadow:var(--box-shadow);*/
 }
 
 .Inputfields .pw-table-responsive,
@@ -46,24 +67,11 @@ html, body {
     box-shadow:none;
 }
 
-
-.PageList .PageListItem > a, 
-.uk-tab > li > a, 
-#pw-masthead .uk-navbar-nav > li > a, 
-button, .uk-button, .ui-button, 
-h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font);
+.pw-dropdown-menu .uk-active.ui-menu-item >a {
+  background: #e2e9ef !important;
 }
 
-.PageList .PageListItem > a, 
-.uk-tab > li > a, 
-#pw-masthead .uk-navbar-nav > li > a, 
-button, .uk-button, .ui-button {
-    font-size: 17px;
-}
-
-
-/* =========================================================== 
+/* ===========================================================
     Login
 =========================================================== */
 .ProcessLogin #ProcessLoginForm {
@@ -91,17 +99,56 @@ button, .uk-button, .ui-button {
     text-align:center;
 }
 
-/* =========================================================== 
-    Custom Style
-=========================================================== */
+/* ----------------------------------------------------------------
+  UIkit
+------------------------------------------------------------------- */
+.uk-label {
+  font-size:13px;
+}
 
-.ivm-white {
-    background: #fff;
+.uk-text-small,
+.uk-form-label:not(.InputfieldHeader) {
+  font-size: 0.9rem;
+}
+
+
+.uk-text-success {
+  color: #25b14a!important;
+}
+
+.uk-text-danger {
+  color: #e83561 !important;
+}
+
+.uk-text-warning {
+  color: #e0b54a !important;
+}
+
+.uk-text-primary {
+  color: #6c8dae !important;
+}
+
+
+/* =================================================================
+  Custom Style
+==================================================================== */
+
+.ivm-bg-white {
+  background: #fff;
 }
 
 .ivm-border {
-    border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color);
 }
+.ivm-border-bottom { border-bottom: 1px solid var(--border-color);}
+.ivm-border-top { border-top: 1px solid var(--border-color);}
+.ivm-border-left { border-left: 1px solid var(--border-color);}
+.ivm-border-right { border-right: 1px solid var(--border-color);}
+
+.ivm-border-remove-bottom { border-bottom: none;}
+.ivm-border-remove-top { border-top: none;}
+.ivm-border-remove-left { border-left: none;}
+.ivm-border-remove-right { border-right: none;}
 
 .ivm-box-shadow:not(.uk-card-hover),
 .uk-box-shadow-small:not(.uk-card-hover) {
@@ -110,121 +157,134 @@ button, .uk-button, .ui-button {
 
 .ivm-muted,
 .uk-background-muted {
-    background: #F0F3F7;
+  background: #F3F6F9;
 }
 
-/*  Basics
-=========================================================== */
-
-.tm-font {
-    font-family: var(--font);
+.ivm-border-dashed {
+    border-style: dashed;
+}
+hr.ivm-border-dashed {
+    border-color: #ccc;
 }
 
-.uk-button {
-    text-transform: uppercase;
-    font-size: 15px;
-    font-weight: 500;
-}
-.uk-button-link {
-    color: var(--dark-color);
-}
-.uk-button-link:focus,
-.uk-button-link:hover {
-    text-decoration: none;
+.ivm-link-reset:hover {
+  text-decoration: none !important;
 }
 
-.uk-button-default {
-    background: #fff;
+.uk-tab + .ivm-border + .ivm-border,
+.uk-tab + .ivm-border {
+  border-top:0;
+  margin-left:-1px;
+}
+
+/* ----------------------------------------------------------------
+  Drop
+------------------------------------------------------------------- */
+.uk-drop > div {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.13);
+}
+.uk-drop-right-center:after {
+  content:"";
+  display: block;
+	right: 100%;
+	top:50%;
+  margin-top:-12px;
+	border: solid transparent;
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: transparent;
+	border-right-color: white;
+	border-width: 10px;
+}
+
+.uk-drop-right-center:before {
+  content:"";
+  display: block;
+	right: 100%;
+  top:50%;
+  margin-top:-14px;
+	border: solid transparent;
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: transparent;
+	border-right-color: #eee;
+	border-width: 12px;
+}
+
+.uk-drop-left-center:after {
+  content:"";
+  display: block;
+	left: 100%;
+	top:50%;
+  margin-top:-12px;
+	border: solid transparent;
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: transparent;
+	border-left-color: white;
+	border-width: 10px;
+}
+
+.uk-drop-left-center:before {
+  content:"";
+  display: block;
+	left: 100%;
+  top:50%;
+  margin-top:-14px;
+	border: solid transparent;
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: transparent;
+	border-left-color: #eee;
+	border-width: 12px;
 }
 
 
-/* Sortable Table
-======================================================================== */
+/* ----------------------------------------------------------------
+  Table
+------------------------------------------------------------------- */
 
-.handle {
-    padding:0 10px;
-    cursor: grab;
-    cursor: -webkit-grab;
-}
-
-.ui-sortable-helper .handle {
-    cursor: move;
-}
-
-.ui-sortable-helper {
-    background: #fff;
-    border:1px solid #ddd;
-    box-shadow: 0px 5px 25px rgba(0, 0, 0, 0.1);
-    width:100%;
-}
-
-#sortable a > .fa {
-    font-size:20px;
-}
-
-#sortable a:hover {
-    text-decoration: none;
-}
-
-.ui-sortable-helper > td:not(:first-child):not(:nth-child(2)) {
-    display:none;
-}
-
-/*  Table
-=========================================================== */
-.uk-table-striped tbody tr:nth-of-type(2n+1), .uk-table-striped > tr:nth-of-type(2n+1) {
-    background: #f9f9f9;
-}
-
-.ivm-table i {
-    font-size:18px;
-}
-
-a.ivm-is-unpublished,
-tr.ivm-is-unpublished a {
-    text-decoration: line-through;
-    color:#888;
-}
-
-a.ivm-is-hidden,
-tr.ivm-is-hidden *:not(option):not(select) {
-    color:#888;
+.uk-table-striped tbody tr:nth-of-type(odd),
+.uk-table-striped>tr:nth-of-type(odd) {
+  background: #f8f8f8;
 }
 
 
-tr.ivm-is-hidden .fa-toggle-on:before {
-    content: "\f204";
+/* ----------------------------------------------------------------
+  Notification
+------------------------------------------------------------------- */
+.uk-notification-message {
+  border-radius:4px;
 }
 
-td a:hover {
-    text-decoration:none;
+.uk-notification-message .uk-close {
+  color: white;
 }
 
-td .ivm-ajax-button {
-    display:inline-block;
-    width: 35px;
-    text-align:center;
+.uk-notification-message-primary {
+  background: #3eb998;
+  color: white;
 }
-
-/* =========================================================== 
-    Tabs
-=========================================================== */
-.ivm-tabs {
-    margin-bottom: -1px;
-    margin-left:1px;
+.uk-notification-message-success {
+  background: #25b14a;
+  color: white;
 }
-
-.ivm-tabs.uk-tab a {
-    text-transform: uppercase;
-    font-size: 15px !important;
-    font-weight: 500;
+.uk-notification-message-warning {
+  background: #FFD15E;
+  color: #222;
 }
-
-/* =========================================================== 
-    Modal
-=========================================================== */
-.uk-modal-dialog {
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: 0px 5px 15px 4px rgba(0, 0, 0, 0.2);
+.uk-notification-message-warning .uk-close  {
+  color: #222;
+}
+.uk-notification-message-danger {
+  background: #e83561;
+  color: white;
 }
