@@ -344,7 +344,7 @@ class KreativanHelper extends WireData implements Module {
    */
   public function setMultilangPage($p) {
     $languages = wire("languages");
-    if(count($languages) > 0) {
+    if(!empty($languages) && count($languages) > 0) {
       foreach($languages as $lng)  {
         if($lng->name != "default") {
           $status = "status{$lng->id}";
