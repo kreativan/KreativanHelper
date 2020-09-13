@@ -283,8 +283,9 @@ class KreativanHelper extends WireData implements Module {
     $this->fuel->breadcrumbs->add(new Breadcrumb($this->page->url.$this->session->get("back_url"), $this->page->title));
 
     // Force activate multi-language page variations
-    if($this->languages && $this->languages->count) {
-      foreach($this->languages as $lng) {
+    $languages = wire("languages");
+    if(count($languages) > 0) {
+      foreach($languages as $lng) {
         $id = $this->sanitizer->int($this->input->get->id);
         $p = $this->pages->get("id=$id");
         $status_field = "status{$lng}";
@@ -344,7 +345,7 @@ class KreativanHelper extends WireData implements Module {
    */
   public function setMultilangPage($p) {
     $languages = wire("languages");
-    if(!empty($languages) && count($languages) > 0) {
+    if(count($languages) > 0) {
       foreach($languages as $lng)  {
         if($lng->name != "default") {
           $status = "status{$lng->id}";

@@ -16,7 +16,7 @@ $redirect_segment = str_replace("~", "", $redirect_segment);
 if($action) {
 
   $id = $this->sanitizer->selectorValue($this->input->get->id);
-  $p = $this->pages->get("id=$id, include=all");;
+  $p = $this->pages->get($id);
 
   //
   // Publish / Unpublish
