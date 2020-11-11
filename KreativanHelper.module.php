@@ -29,28 +29,17 @@ class KreativanHelper extends WireData implements Module {
     // Register $helper api var
     $this->wire('helper', $this, true);
 
-    // register theme var
-    $theme = $this->modules->get("cmsTheme")->theme();
-    $this->wire('theme', $theme, true);
-
-    // register themeSettings var
-    $theme_settings = $this->modules->get("cmsTheme")->settings();
-    $this->wire('theme_settings', $theme_settings, true);
-
-    // Other api vars
-    // var => ClassName
+    // var => data
     $vars = [
-      "cms" => "cms",
-      "cmsLayout" => "cmsLayout",
-      "cmsCustomizer" => "CustomizerUIkit",
+      // "cms" => $this->modules->get("cms"),
     ];
 
-    // Register other vars
-    foreach($vars as $key => $value) {
-      if($this->modules->isInstalled("$value")) {
-        $this->wire("$key", $this->modules->get("$value"), true);
-      }
-    }
+    // Register vars
+		if(count($vars) > 0) {
+			foreach($vars as $key => $value) {
+				$this->wire($key, $value, true);
+			}
+		}
 
   }
 
