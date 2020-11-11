@@ -24,6 +24,36 @@ class KreativanHelper extends WireData implements Module {
     $this->module_url = $this->config->urls->siteModules.$this->className();
   }
 
+  public function ready() {
+
+    // Register $helper api var
+    $this->wire('helper', $this, true);
+
+    // register theme var
+    $theme = $this->modules->get("cmsTheme")->theme();
+    $this->wire('theme', $theme, true);
+
+    // register themeSettings var
+    $theme_settings = $this->modules->get("cmsTheme")->settings();
+    $this->wire('theme_settings', $theme_settings, true);
+
+    // Other api vars
+    // var => ClassName
+    $vars = [
+      "cms" => "cms",
+      "cmsLayout" => "cmsLayout",
+      "cmsCustomizer" => "CustomizerUIkit",
+    ];
+
+    // Register other vars
+    foreach($vars as $key => $value) {
+      if($this->modules->isInstalled("$value")) {
+        $this->wire("$key", $this->modules->get("$value"), true);
+      }
+    }
+
+  }
+
   public function init() {
 
     if($this->isAdminPage()) {
