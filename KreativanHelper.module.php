@@ -425,5 +425,40 @@ class KreativanHelper extends WireData implements Module {
       move_uploaded_file($temp_file, "{$dest}{$rename}");
     }
   }
+	
+	/**
+   *  Get the difference between two dates
+   *  in weeks, days, minutes, seconds...
+   *  @param integer $start timestamp
+   *  @param integer $stop timestamp
+   *  @param string $format - weeks, days, minutes, seconds
+   *  @return integer
+   */
+  public function dateDiff($start, $stop, $format = "days") {
+    switch ($format) {
+      case 'weeks':
+        $exclude_arr = ["days", "hours", "minutes", "seconds"];
+        break;
+      case 'days':
+        $exclude_arr = ["weeks", "hours", "minutes", "seconds"];
+        break;
+      case 'hours':
+        $exclude_arr = ["weeks", "days", "minutes", "seconds"];
+        break;
+      case 'minutes':
+        $exclude_arr = ["weeks", "days", "hours", "seconds"];
+        break;
+      case 'seconds':
+        $exclude_arr = ["weeks", "days", "hours", "minutes"];
+        break;
+      default:
+        $exclude_arr = ["weeks", "hours", "minutes", "seconds"];
+        break;
+    }
+
+    $return = $datetime->elapsedTimeStr($start, $stop,false, ["exclude" => $exclude_arr]);
+    return (int) $return;
+
+  }
 
 }
