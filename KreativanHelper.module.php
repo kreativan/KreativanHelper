@@ -31,15 +31,13 @@ class KreativanHelper extends WireData implements Module {
 
     // var => data
     $vars = [
-      // "cms" => $this->modules->get("cms"),
+      "settings" => $this->modules->get("KreativanSettings"),
     ];
 
-    // Register vars
-		if(count($vars) > 0) {
-			foreach($vars as $key => $value) {
-				$this->wire($key, $value, true);
-			}
-		}
+    // Register other vars
+    foreach($vars as $key => $value) {
+      $this->wire($key, $value, true);
+    }
 
   }
 
@@ -302,9 +300,8 @@ class KreativanHelper extends WireData implements Module {
     $this->fuel->breadcrumbs->add(new Breadcrumb($this->page->url.$this->session->get("back_url"), $this->page->title));
 
     // Force activate multi-language page variations
-    $languages = wire("languages");
-    if(count($languages) > 0) {
-      foreach($languages as $lng) {
+    if($this->languages && $this->languages->count) {
+      foreach($this->languages as $lng) {
         $id = $this->sanitizer->int($this->input->get->id);
         $p = $this->pages->get("id=$id");
         $status_field = "status{$lng}";
@@ -364,7 +361,7 @@ class KreativanHelper extends WireData implements Module {
    */
   public function setMultilangPage($p) {
     $languages = wire("languages");
-    if(count($languages) > 0) {
+    if(!empty($languages) && count($languages) > 0) {
       foreach($languages as $lng)  {
         if($lng->name != "default") {
           $status = "status{$lng->id}";
@@ -424,41 +421,6 @@ class KreativanHelper extends WireData implements Module {
       $rename = $rename != "" ? "{$rename}.{$this_file_ext}" : $this_file;
       move_uploaded_file($temp_file, "{$dest}{$rename}");
     }
-  }
-	
-	/**
-   *  Get the difference between two dates
-   *  in weeks, days, minutes, seconds...
-   *  @param integer $start timestamp
-   *  @param integer $stop timestamp
-   *  @param string $format - weeks, days, minutes, seconds
-   *  @return integer
-   */
-  public function dateDiff($start, $stop, $format = "days") {
-    switch ($format) {
-      case 'weeks':
-        $exclude_arr = ["days", "hours", "minutes", "seconds"];
-        break;
-      case 'days':
-        $exclude_arr = ["weeks", "hours", "minutes", "seconds"];
-        break;
-      case 'hours':
-        $exclude_arr = ["weeks", "days", "minutes", "seconds"];
-        break;
-      case 'minutes':
-        $exclude_arr = ["weeks", "days", "hours", "seconds"];
-        break;
-      case 'seconds':
-        $exclude_arr = ["weeks", "days", "hours", "minutes"];
-        break;
-      default:
-        $exclude_arr = ["weeks", "hours", "minutes", "seconds"];
-        break;
-    }
-
-    $return = $datetime->elapsedTimeStr($start, $stop,false, ["exclude" => $exclude_arr]);
-    return (int) $return;
-
   }
 
 }

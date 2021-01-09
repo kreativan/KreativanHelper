@@ -1,4 +1,4 @@
-<?php namespace ProcessWire;
+<?php
 // Here you can add custom hooks that will run on init
 
 //
@@ -10,7 +10,7 @@ $this->addHookBefore('Pages::saveReady', function(HookEvent $event) {
   $languages = wire("languages");
 
   // Make sure page is active for all languages
-  if(count($languages) > 0) {
+  if($languages && count($languages) > 0) {
     foreach($languages as $lng)  {
       if($lng->name != "default") {
         $status = "status{$lng->id}";
@@ -21,7 +21,7 @@ $this->addHookBefore('Pages::saveReady', function(HookEvent $event) {
 
   // Make sure page has default title set
   // use first avalable title from other languages
-  if(count($languages) > 0) {
+  if($languages && count($languages) > 0) {
     $default_title = $page->getLanguageValue("default", "title");
     if(empty($default_title)) {
       foreach($languages as $lng)  {
