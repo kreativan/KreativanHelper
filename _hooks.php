@@ -1,5 +1,7 @@
 <?php
 // Here you can add custom hooks that will run on init
+$_hooks = $this->config->paths->templates . "_hooks.php";
+if(file_exists($_hooks)) include($_hooks);
 
 //
 //  On Page Save
@@ -7,6 +9,7 @@
 $this->addHookBefore('Pages::saveReady', function(HookEvent $event) {
 
   $page = $event->arguments(0);
+
   $languages = wire("languages");
 
   // Make sure page is active for all languages

@@ -30,11 +30,11 @@ class KreativanHelper extends WireData implements Module {
     $this->wire('helper', $this, true);
 
     // var => data
-    $vars = [
-      "settings" => $this->modules->get("KreativanSettings"),
-    ];
+    $_vars = $this->config->paths->templates . "_vars.php";
+    if(file_exists($_vars)) include($_vars);
 
     // Register other vars
+    if($vars && isset($vars) && count($vars) > 0)
     foreach($vars as $key => $value) {
       $this->wire($key, $value, true);
     }
