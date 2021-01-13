@@ -1,7 +1,7 @@
 <?php namespace ProcessWire;
 
 $action_url = !empty($action_url) ? $action_url : $page->url;
-$form_id = !empty($form_id) ? $form_id : "autocomplete-search";
+$form_id = !empty($form_id) ? $form_id : "autocomplete";
 $field_name = !empty($form_id) ? $form_id : "autocomplete_id";
 $field_label = !empty($field_label) ? $field_label : "Autocomplete Search";
 
