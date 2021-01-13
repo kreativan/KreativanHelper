@@ -34,9 +34,10 @@ class KreativanHelper extends WireData implements Module {
     if(file_exists($_vars)) include($_vars);
 
     // Register other vars
-    if($vars && isset($vars) && count($vars) > 0)
-    foreach($vars as $key => $value) {
-      $this->wire($key, $value, true);
+    if($vars && isset($vars) && count($vars) > 0) {
+      foreach($vars as $key => $value) {
+        $this->wire($key, $value, true);
+      }
     }
 
   }
