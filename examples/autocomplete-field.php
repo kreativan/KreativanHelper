@@ -1,6 +1,6 @@
 <?php namespace ProcessWire;
 
-$action_url = !empty($action_url) ? $action_url : $page->url;
+$action_url = !empty($action_url) ? $action_url : $page->url . $page_name;
 $form_id = !empty($form_id) ? $form_id : "autocomplete";
 $field_name = !empty($form_id) ? $form_id : "autocomplete_id";
 $field_label = !empty($field_label) ? $field_label : "Autocomplete Search";
@@ -9,7 +9,7 @@ $template_name = $template_name ? $template_name : "";
 $selector = !empty($selector) ? $selector : "";
 $search_fields = !empty($search_fields) ? $search_fields : "name title"; // fields to search
 $search_label = !empty($search_label) ? $search_label : "{title}"; // search sresult item label
-$search_value = !empty($value) ? $value : ""; // current value
+$search_value = !empty($value) ? $value : $input->get->autocomplete; // current value
 
 $notes = !empty($notes) ? $notes : "";
 $description = !empty($description) ? $description : "";
